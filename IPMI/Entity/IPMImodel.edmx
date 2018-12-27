@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="IPMI_DBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="mDept">
+          <Key>
+            <PropertyRef Name="IdDept" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdDept" Type="varchar" MaxLength="6" Nullable="false" />
+          <Property Name="NamaDept" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tIpmi">
+          <Key>
+            <PropertyRef Name="NoIPMI" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NoIPMI" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Tgl" Type="date" />
+          <Property Name="Dari" Type="varchar" MaxLength="6" Nullable="false" />
+          <Property Name="ke" Type="varchar" MaxLength="6" />
+          <Property Name="Masalah" Type="varchar(max)" />
+          <Property Name="Jumlah" Type="int" />
+          <Property Name="Status" Type="varchar" MaxLength="10" />
+          <Property Name="Ket" Type="varchar" MaxLength="250" />
+          <Property Name="FileName" Type="varchar" MaxLength="1" />
+          <Property Name="FileName1" Type="varchar" MaxLength="1" />
+          <Property Name="Status1" Type="varchar" MaxLength="10" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="UpdatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="UpdateDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="tIpmiAnalisa">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NoIPMI" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Penyebab" Type="varchar(max)" />
+          <Property Name="RencanaPerbaikan" Type="varchar" MaxLength="100" />
+          <Property Name="Target" Type="datetime" />
+          <Property Name="PIC" Type="varchar" MaxLength="50" />
+          <Property Name="TglActual" Type="datetime" />
+          <Property Name="Status" Type="varchar" MaxLength="10" />
+          <Property Name="InputByDept" Type="varchar" MaxLength="50" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="CreatedDate" Type="date" />
+          <Property Name="UpdatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="UpdateDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="tIPMIDetail">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NoIPMI" Type="varchar" MaxLength="50" />
+          <Property Name="Ke" Type="varchar" MaxLength="15" />
+          <Property Name="Status" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityContainer Name="IPMI_DBModelStoreContainer">
+          <EntitySet Name="mDept" EntityType="Self.mDept" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tIpmi" EntityType="Self.tIpmi" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tIpmiAnalisa" EntityType="Self.tIpmiAnalisa" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tIPMIDetail" EntityType="Self.tIPMIDetail" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="IPMI_DBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="mDept">
+          <Key>
+            <PropertyRef Name="IdDept" />
+          </Key>
+          <Property Name="IdDept" Type="String" MaxLength="6" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NamaDept" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="tIpmi">
+          <Key>
+            <PropertyRef Name="NoIPMI" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NoIPMI" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Tgl" Type="DateTime" Precision="0" />
+          <Property Name="Dari" Type="String" MaxLength="6" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ke" Type="String" MaxLength="6" FixedLength="false" Unicode="false" />
+          <Property Name="Masalah" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Jumlah" Type="Int32" />
+          <Property Name="Status" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="FileName" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdateDate" Type="DateTime" Precision="3" />
+          <Property Name="Status1" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Ket" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="FileName1" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="tIpmiAnalisa">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NoIPMI" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Penyebab" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="RencanaPerbaikan" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Target" Type="DateTime" Precision="3" />
+          <Property Name="PIC" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TglActual" Type="DateTime" Precision="3" />
+          <Property Name="Status" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="InputByDept" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="0" />
+          <Property Name="UpdatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UpdateDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="tIPMIDetail">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NoIPMI" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Ke" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityContainer Name="IPMI_DBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="mDepts" EntityType="Self.mDept" />
+          <EntitySet Name="tIpmis" EntityType="Self.tIpmi" />
+          <EntitySet Name="tIpmiAnalisas" EntityType="Self.tIpmiAnalisa" />
+          <EntitySet Name="tIPMIDetails" EntityType="Self.tIPMIDetail" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="IPMI_DBModelStoreContainer" CdmEntityContainer="IPMI_DBEntities">
+          <EntitySetMapping Name="mDepts">
+            <EntityTypeMapping TypeName="IPMI_DBModel.mDept">
+              <MappingFragment StoreEntitySet="mDept">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="IdDept" ColumnName="IdDept" />
+                <ScalarProperty Name="NamaDept" ColumnName="NamaDept" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tIpmis">
+            <EntityTypeMapping TypeName="IPMI_DBModel.tIpmi">
+              <MappingFragment StoreEntitySet="tIpmi">
+                <ScalarProperty Name="FileName1" ColumnName="FileName1" />
+                <ScalarProperty Name="Ket" ColumnName="Ket" />
+                <ScalarProperty Name="Status1" ColumnName="Status1" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="NoIPMI" ColumnName="NoIPMI" />
+                <ScalarProperty Name="Tgl" ColumnName="Tgl" />
+                <ScalarProperty Name="Dari" ColumnName="Dari" />
+                <ScalarProperty Name="ke" ColumnName="ke" />
+                <ScalarProperty Name="Masalah" ColumnName="Masalah" />
+                <ScalarProperty Name="Jumlah" ColumnName="Jumlah" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdateDate" ColumnName="UpdateDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tIpmiAnalisas">
+            <EntityTypeMapping TypeName="IPMI_DBModel.tIpmiAnalisa">
+              <MappingFragment StoreEntitySet="tIpmiAnalisa">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="NoIPMI" ColumnName="NoIPMI" />
+                <ScalarProperty Name="Penyebab" ColumnName="Penyebab" />
+                <ScalarProperty Name="RencanaPerbaikan" ColumnName="RencanaPerbaikan" />
+                <ScalarProperty Name="Target" ColumnName="Target" />
+                <ScalarProperty Name="PIC" ColumnName="PIC" />
+                <ScalarProperty Name="TglActual" ColumnName="TglActual" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="InputByDept" ColumnName="InputByDept" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdateDate" ColumnName="UpdateDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tIPMIDetails">
+            <EntityTypeMapping TypeName="IPMI_DBModel.tIPMIDetail">
+              <MappingFragment StoreEntitySet="tIPMIDetail">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="NoIPMI" ColumnName="NoIPMI" />
+                <ScalarProperty Name="Ke" ColumnName="Ke" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

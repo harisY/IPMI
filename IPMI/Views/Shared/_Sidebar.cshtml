@@ -1,0 +1,156 @@
+﻿@using IPMI.Helpers
+@using IPMI.Models
+<!-- Left side column. contains the logo and sidebar -->
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+        <!-- Sidebar user panel -->
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="~/Content/adminlte/img/avatar5.png" class="img-circle" alt="User Image">
+            </div>
+            <div class="pull-left info">
+                <p>@User.Identity.GetUserNameIdentifier()</p>
+                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+        <!-- search form -->
+        <form action="#" method="get" class="sidebar-form">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search...">
+                <span class="input-group-btn">
+                    <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </span>
+            </div>
+        </form>
+        <!-- /.search form -->
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        <ul class="sidebar-menu" data-widget="tree">
+            <li class="header">MAIN NAVIGATION</li>
+            <li class="@Html.IsSelected(controller: "Dashboard")">
+                <a href="@Url.Action("Dashboardv1", "Dashboard")">
+                    <i class="fa fa-folder-o"></i> <span> Dashboard</span>
+                </a>
+            </li>
+            <! ============================= USER ===================== -->
+            @if (User.IsInRole("Administrator"))
+            {
+                <li class="treeview @Html.IsSelected(controller: "User")">
+                    <a href="@Url.Action("Index", "User")">
+                        <i class="fa fa-folder-o"></i>
+                        <span> User Management</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="@Html.IsSelected(action: "Index")"><a href="@Url.Action("Index", "User")"><i class="fa fa-circle-o"></i> User</a></li>
+                        <li class="@Html.IsSelected(action: "ViewAllRoles")"><a href="@Url.Action("ViewAllRoles", "User")"><i class="fa fa-circle-o"></i> Role</a></li>
+                    </ul>
+                </li>
+                <li class="@Html.IsSelected(controller: "Dept")">
+                    <a href="@Url.Action("Index", "Dept")">
+                        <i class="fa fa-folder-o"></i> <span> Department</span>
+                    </a>
+                </li>
+                @*<li class="@Html.IsSelected(controller: "IM")">
+                        <a href="@Url.Action("Create", "IM")">
+                            <i class="fa fa-folder-o"></i> <span> Identifikasi Masalah</span>
+                        </a>
+                    </li>*@
+                <li class="treeview @Html.IsSelected(controller: "Ipmi")">
+                    <a href="@Url.Action("Index", "Ipmi")">
+                        <i class="fa fa-folder-o"></i>
+                        <span> Identifikasi Masalah</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="@Html.IsSelected(action: "Index")"><a href="@Url.Action("Index", "Ipmi")"><i class="fa fa-circle-o"></i> Buat Baru</a></li>
+                        <li class="@Html.IsSelected(action: "Index1")"><a href="@Url.Action("Index1", "Ipmi")"><i class="fa fa-circle-o"></i> Sudah Selesai</a></li>
+                        <li class="@Html.IsSelected(action: "Index2")"><a href="@Url.Action("Index2", "Ipmi")"><i class="fa fa-circle-o"></i> Semua(belum/sudah) </a></li>
+                        <li class="@Html.IsSelected(action: "Index3")"><a href="@Url.Action("Index3", "Ipmi")"><i class="fa fa-circle-o"></i> Verifikasi</a></li>
+                    </ul>
+                </li>
+                <li class="treeview @Html.IsSelected(controller: "Analisa1")">
+                    <a href="@Url.Action("Index", "Analisa1")">
+                        <i class="fa fa-folder-o"></i>
+                        <span> Analisa & P. Masalah</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="@Html.IsSelected(action: "Index")"><a href="@Url.Action("Index", "Analisa1")"><i class="fa fa-circle-o"></i> Buat Baru</a></li>
+                        <li class="@Html.IsSelected(action: "Index1")"><a href="@Url.Action("Index1", "Analisa1")"><i class="fa fa-circle-o"></i> On Proses</a></li>
+                        <li class="@Html.IsSelected(action: "Index2")"><a href="@Url.Action("Index2", "Analisa1")"><i class="fa fa-circle-o"></i> Sudah Selesai</a></li>
+                        <li class="@Html.IsSelected(action: "Index3")"><a href="@Url.Action("Index3", "Analisa1")"><i class="fa fa-circle-o"></i> Semua</a></li>
+                    </ul>
+                </li>
+                <li class="treeview @Html.IsSelected(controller: "Reports")">
+                    <a href="@Url.Action("Index", "Reports")">
+                        <i class="fa fa-bar-chart-o"></i>
+                        <span> Report</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="@Html.IsSelected(action: "Index1")"><a href="@Url.Action("Index1", "Reports")"><i class="fa fa-circle-o"></i> Identifikasi Masalah</a></li>
+                        @*<li class="@Html.IsSelected(action: "IndexAnalisa")"><a href="@Url.Action("IndexAnalisa", "Reports")"><i class="fa fa-circle-o"></i> Analisa & Perbaikan Masalah</a></li>*@
+                    </ul>
+                </li>
+            }
+            else
+            {
+                <li class="treeview @Html.IsSelected(controller: "Ipmi")">
+                    <a href="@Url.Action("Index", "Ipmi")">
+                        <i class="fa fa-folder-o"></i>
+                        <span> Identifikasi Masalah</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="@Html.IsSelected(action: "Index")"><a href="@Url.Action("Index", "Ipmi")"><i class="fa fa-circle-o"></i> Buat Baru</a></li>
+                        <li class="@Html.IsSelected(action: "Index1")"><a href="@Url.Action("Index1", "Ipmi")"><i class="fa fa-circle-o"></i> Sudah Selesai</a></li>
+                        <li class="@Html.IsSelected(action: "Index2")"><a href="@Url.Action("Index2", "Ipmi")"><i class="fa fa-circle-o"></i> Semua(belum/sudah) </a></li>
+                        <li class="@Html.IsSelected(action: "Index3")"><a href="@Url.Action("Index3", "Ipmi")"><i class="fa fa-circle-o"></i> Verifikasi</a></li>
+                    </ul>
+                </li>
+                <li class="treeview @Html.IsSelected(controller: "Analisa1")">
+                    <a href="@Url.Action("Index", "Analisa1")">
+                        <i class="fa fa-folder-o"></i>
+                        <span> Analisa & P. Masalah</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="@Html.IsSelected(action: "Index")"><a href="@Url.Action("Index", "Analisa1")"><i class="fa fa-circle-o"></i> Buat Baru</a></li>
+                        <li class="@Html.IsSelected(action: "Index1")"><a href="@Url.Action("Index1", "Analisa1")"><i class="fa fa-circle-o"></i> On Proses</a></li>
+                        <li class="@Html.IsSelected(action: "Index2")"><a href="@Url.Action("Index2", "Analisa1")"><i class="fa fa-circle-o"></i> Sudah Selesai</a></li>
+                        <li class="@Html.IsSelected(action: "Index3")"><a href="@Url.Action("Index3", "Analisa1")"><i class="fa fa-circle-o"></i> Semua</a></li>
+                    </ul>
+                </li>
+                <li class="treeview @Html.IsSelected(controller: "Reports")">
+                    <a href="@Url.Action("Index", "Reports")">
+                        <i class="fa fa-bar-chart-o"></i>
+                        <span> Report</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="@Html.IsSelected(action: "Index1")"><a href="@Url.Action("Index1", "Reports")"><i class="fa fa-circle-o"></i> Identifikasi Masalah</a></li>
+                        @*<li class="@Html.IsSelected(action: "IndexAnalisa")"><a href="@Url.Action("IndexAnalisa", "Reports")"><i class="fa fa-circle-o"></i> Analisa & Perbaikan Masalah</a></li>*@
+                    </ul>
+                </li>
+            }
+        </ul>
+    </section>
+    <!-- /.sidebar -->
+</aside>

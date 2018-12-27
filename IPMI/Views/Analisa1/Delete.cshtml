@@ -1,0 +1,113 @@
+﻿@model IEnumerable<IPMI.Entity.tIpmiAnalisa>
+@using IPMI.Entity;
+@{
+    ViewBag.Title = "Analisa & Perbaikan Masalah - OnProgress";
+    tIpmiAnalisa analisa = (tIpmiAnalisa)ViewData["ListAnalisa"];
+
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="form-horizontal">
+                    <h4>Are you sure want to delete this?</h4>
+                    <hr />
+                    <div class="form-group">
+                        <input id="form_id" class="hidden" />
+                        <label class="col-md-1 control-label" style="text-align:left;">NO IPMI</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <input id="txtIpmi" class="form-control" disabled="disabled" value="@analisa.NoIPMI" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left">Penyebab</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <textarea class="form-control" rows="2" id="txtPenyebab" style="resize:none" disabled="disabled">@analisa.Penyebab</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left;">R. Perbaikan</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <input type="text" input id="txtPerbaikan" class="form-control" value="@analisa.RencanaPerbaikan" disabled="disabled" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left">Target</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="txtTarget" value="@analisa.Target" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left">PIC</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="txtPIC" value="@analisa.PIC" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left">Tgl Aktual</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="txtTgl" value="@analisa.TglActual" disabled="disabled">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-5">
+                            <button id="btnCreate" type="button" class="btn btn-primary" onclick="return Delete()" style="width:100px"> Delete</button>
+                            <button id="btnBack" type="button" class="btn btn-primary" style="width:100px" onclick="location.href='@Url.Action("Index1", "Analisa1")'"> Back To List</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#txtDate').datepicker({
+                autoclose: true,
+                orientation: "bottom left",
+                todayHighlight: true
+            });
+            //InitialConditions();
+        })
+        toastr.options = {
+            "positionClass": "toast-bottom-right",
+            "timeOut": "1000",
+            "preventDuplicates": true
+        }
+        function Delete() {
+            var txtIpmi = $("#txtIpmi").val();
+            if (txtIpmi == "") {
+                toastr.warning('No data to delete.')
+            }
+            else {
+                var saveUrl = '@Url.Action("Delete", "Analisa1")';
+                var newUrl = '@Url.Action("Index1", "Analisa1")';
+                var models = { NoIpmi: txtIpmi};
+                $.ajax({
+                    type: "POST",
+                    url: saveUrl,
+                    data: {models},
+                    success: function (data) {
+                        if (data.success) {
+                            window.location.href = newUrl;
+
+                        } else {
+                            window.location.href = newUrl;
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+}

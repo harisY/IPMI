@@ -1,0 +1,129 @@
+﻿@model IPMI.Models.IM.IMModels
+@using IPMI.Models
+@{
+    List<StandartComboBox> Dept = (List<StandartComboBox>)ViewData["Dept"];
+    ViewBag.Title = "IDENTIFIKASI MASALAH";
+}
+
+@using (Html.BeginForm())
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                @Html.AntiForgeryToken()
+                <div class="box-body">
+                    <div class="form-horizontal">
+                        <h4>Create IM</h4>
+                        <hr />
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left;">No IPMI</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                @Html.Editor("AutoNO", new { htmlAttributes = new { @class = "form-control", @id = "form_no", disabled = "disabled", @readonly = "readonly" } })
+                                @*@Html.ValidationMessageFor(model => model.NoIPMI, "", new { @class = "text-danger" })*@
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left;">Tanggal</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                @Html.EditorFor(model => model.Tgl, new { htmlAttributes = new { @class = "form-control", @id = "form_tgl" } })
+                                @Html.ValidationMessageFor(model => model.Tgl, "", new { @class = "text-danger" })
+                                @*@Html.TextBoxFor(m => m.Tgl, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "datetime-local" })
+                                    @Html.ValidationMessageFor(m => m.Tgl, "", new { @class = "text-danger" })*@
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left;">Dari</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                <select id="form_process_name" class="form-control">
+                                    @foreach (var item in Dept)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                                @*@Html.DropDownList("IdDept", null, new { @class = "form-control", @id = "form_IdDept" })*@
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left;">Problem</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                <textarea class="form-control" rows="3" id="problem" style="resize:none"></textarea>
+                                @*@Html.TextAreaFor(model => model.Masalah, new { style = "width: 435px; height:50px;" })*@
+                                @*@Html.TextAreaFor(model => model.Masalah, new { htmlAttributes = new { @class = "form-control", @id = "form_M" }, @cols = 68, @rows = 4 })*@
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left;">Jumlah</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-2">
+                                @Html.EditorFor(model => model.Jumlah, new { htmlAttributes = new { @class = "form-control", @id = "form_J" } })
+                                @Html.ValidationMessageFor(model => model.Jumlah, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <hr />
+                        <div id="tabledetail">
+                            @Html.Partial("Partial/_GridIMdetails")
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="box-footer">
+                <div class="col-sm-offset-4 col-md-offset-5 col-sm-8 col-md-7">
+                    <button class="btn btn-primary" onclick="return Save()"><span class="fa fa-save"></span> Save</button>
+                    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="AddPopUp" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content  panel panel-primary">
+                <div class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h2 class="modal-title">Add New Detail</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-3 col-md-4 control-label text-muted" style="text-align:left;">Department Tujuan</label>
+                            <label class="col-sm-1 col-md-1 control-label text-muted ">:</label>
+                            <div class="col-sm-8 col-md-7">
+                                <input id="add_description" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="return AddDetail()"><span class="bold fa fa-plus">&nbsp;&nbsp;Add</span></button>&nbsp;
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="bold fa fa-times">&nbsp;&nbsp;Cancel</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*@section Scripts {
+            <script>
+                function Save() {
+                    var IdDept = model => model.IdDept;
+                    var NamaDept = model => model.NamaDept;
+                    var url = "@Url.Action("Create","IM")";
+                    var model = {
+                        IdDept: IdDept,
+                        NamaDept: NamaDept
+                    };
+                    $.post(url, model);
+                }
+
+            </script>
+        }*@
+}

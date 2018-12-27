@@ -1,0 +1,65 @@
+﻿@model IEnumerable<IPMI.Models.RoleDTO>
+@{
+    ViewBag.Title = "LIST ROLES";
+    var no = 0;
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <a href="@Url.Action("AddRole","User")" class="btn btn-primary"><span class="fa fa-plus"></span> Add Role</a>
+                <hr />
+                <table id="table" class="table table-bordered table-striped table-condensed">
+                    <thead style="color:#357CA5">
+                        <tr>
+                            <th style="width:10px; text-align:center;">No</th>
+                            <th>Role</th>
+                            <th style="width:40px; text-align:center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tBody">
+                        @foreach (var item in Model)
+                        {
+                            no++;
+                            <tr>
+                                <td class="_i">@no</td>
+                                <td>@Html.DisplayFor(modelItem => item.RoleName)</td>
+                                <td style="text-align:center;">
+                                    @if (item.RoleName.ToLower() != "administrator")
+                                    {
+                                        @*@Html.ActionLink(" ", "EditRoles", new { UserName = item.RoleName }, new { @class = "btn btn-xs btn-success fa fa-pencil" })*@ 
+                                        @Html.ActionLink(" ", "DeleteUserRole", new { RoleName = item.RoleName }, new { @class = "btn btn-xs btn-danger fa fa-trash", @onclick = "return confirm('Are you sure you wish to delete this user?');" })
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+            DataTable();
+        })
+
+        function DataTable() {
+            $('#table').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false
+            });
+        }
+
+    </script>
+}
+

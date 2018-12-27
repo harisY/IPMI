@@ -1,0 +1,155 @@
+﻿@using IPMI.Models.IM
+@using IPMI.Models
+@{
+    List<IMModels> list = (List<IMModels>)ViewData["ListAnalisa"];
+    var i = 0;
+    //string dari = ViewBag.Dari;
+    ViewBag.Title = "LIST";
+    //List<AnalisaModels> L = new List<AnalisaModels>();
+    //foreach (var item in list)
+    //{
+    //    if (item.InputByDept == "" || item.InputByDept == ViewBag.Dept)
+    //    {
+    //        L.Add(new AnalisaModels
+    //        {
+    //            NoIPMI = item.NoIPMI,
+    //            Tgl = item.Tgl,
+    //            Dari = item.Dari,
+    //            Masalah = item.Masalah,
+    //            Penyebab= item.Penyebab,
+    //            Status = item.Status
+    //        });
+    //    }
+    //}
+}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                @*<button class="btn btn-primary" onclick=""><span class="fa fa-plus"></span> Create New</button>*@
+                @*@Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })*@
+                @*<a href="@Url.Action("Create","Analisa")" class="btn btn-primary"><span class="fa fa-plus"></span> Create New</a>*@
+                <hr />
+                <table id="table" class="table table-bordered table-striped _table" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th style="width:10px; text-align:left;">No</th>
+                            <th text-align:left>Action</th>
+                            <th>No IPMI</th>
+                            <th>Tanggal</th>
+                            <th>Dari</th>
+                            <th>Masalah</th>
+                            <th>File</th>
+                            @*<th>Rencana Perbaikan</th>
+                                <th>Target</th>
+                                <th>PIC</th>
+                                <th>Actual</th>*@
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                        @foreach (var item in list)
+                        {
+                            i++;
+                            <tr>
+                                <td class="_i">@i</td>
+                                <td style="text-align:center;">
+                                    <input class="hidden _id" value="@item.NoIPMI" />
+                                    @*<input class="hidden _statusDetail" value="@item.StatusDetail" />*@
+                                    <input class="hidden _fileName" id="filename" value="@item.FileName" />
+                                    @if (item.Status == "Open")
+                                    {
+                                        if (item.Status != "Open")
+                                        {
+                                            <button class="btn btn-xs btn-success" title="Edit" onclick="location.href='@Url.Action("Edit", "Analisa")/@item.NoIPMI'"><span class="fa fa-pencil"></span></button>//location.href='@Url.Action("Create", "Analisa")'
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-xs btn-success" title="Add" onclick="location.href='@Url.Action("Create", "Analisa")/@item.NoIPMI'"><span class="fa fa-plus"></span></button>//location.href='@Url.Action("Create", "Analisa")'
+                                        }
+                                        @*<button class="btn btn-xs btn-success" title="Add/Edit" onclick="location.href='@Url.Action("Create", "Analisa")/@item.NoIPMI'"><span class="fa fa-pencil"></span></button>*@ //location.href='@Url.Action("Create", "Analisa")'
+                                        <button class="btn btn-xs btn-danger" title="Delete" onclick=""><span class="fa fa-trash"></span></button>
+                                        <button class="btn btn-xs btn-info" title="View" onclick="location.href='@Url.Action("Details", "Analisa")/@item.NoIPMI'"><span class="fa fa-eye"></span></button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-xs btn-info" title="View" onclick="location.href='@Url.Action("Details", "Analisa")/@item.NoIPMI'"><span class="fa fa-eye"></span></button>
+
+                                    }
+                                    @if (item.FileName != "")
+                                    {
+
+                                        <button class="btn btn-xs btn-info" title="Download" onclick="location.href='@Url.Action("Download", "Analisa")?FileName=' + ('@item.FileName')"><span class="fa fa-arrow-down"></span></button>
+
+                                    }
+
+                                     
+                                </td>
+                                <td class="_noipmi">@item.NoIPMI</td>
+                                <td class="_tgl">@item.Tgl</td>
+                                <td class="_dari">@item.Dari</td>
+                                <td class="_masalah">@item.Masalah</td>
+                                @*<td class="_penyebab">@item.Penyebab</td>*@
+                                @*<td class="_perbaikan">@item.RPerbaikan</td>
+                                    <td class="_target">@item.Target</td>
+                                    <td class="_pic">@item.PIC</td>
+                                    <td class="_actual">@item.TglActual</td>*@
+                                <td id="txtFileName" class="_file">@item.FileName</td>
+                                <td class="_status">@item.Status</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+
+        $(document).ready(function () {
+            DataTable();
+        })
+        function DataTable() {
+            $('#table').DataTable({
+                "columnDefs": [
+                    { "width": "15%", "targets": 1 },
+                    { "width": "12%", "targets": 2 },
+                    { "width": "10%", "targets": 3 }
+                ],
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": true
+                //"scrollX": true
+            });
+        }
+
+        function create() {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("Create", "Analisa")',
+                data: {
+                    Id: $("._id").val()
+                }
+            });
+        }
+
+        function Download() {
+            //var FileName = data.closest("tr").find("._file").text();
+            var FileName = "Catatan training.xlsx";
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Download", "Analisa")',
+                data: {
+                    FileName: FileName
+                }
+            });
+        }
+    </script>
+}
+
+
+

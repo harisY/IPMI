@@ -1,0 +1,127 @@
+﻿@model IEnumerable<IPMI.Entity.tIpmi>
+@using IPMI.Entity;
+@{
+    ViewBag.Title = "Identifikasi Masalah";
+    var ListDept = ViewBag.IdDept;
+    tIpmi tIpmi = (tIpmi)ViewData["ListIpmi"];
+
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="form-horizontal">
+                    <h4>Are you sure want to delete this?</h4>
+                    <hr />
+                    <div class="form-group">
+                        <input id="form_id" class="hidden" />
+                        <label class="col-md-1 control-label" style="text-align:left;">NO IPMI</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <input id="txtIpmi" class="form-control" disabled="disabled" value="@tIpmi.NoIPMI" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left">Tanggal</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="txtDate" disabled="disabled" value="@tIpmi.Tgl">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left">Dari</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="txtDept" value="@tIpmi.Dari" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left">Tujuan</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <select id="cmbDept" class="form-control" disabled="disabled" required>
+                                @foreach (var item in ListDept)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left;">Problem</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <textarea class="form-control" rows="3" id="txtProblem" style="resize:none" disabled="disabled">@tIpmi.Masalah</textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left">Jumlah</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="txtJml" value="@tIpmi.Jumlah" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label id="lblFile" class="col-md-1 control-label" style="text-align:left">File</label>
+                        <label id="lblTick" class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="txtFile" value="@tIpmi.FileName" disabled="disabled">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-5">
+                            <button id="btnCreate" type="button" class="btn btn-primary" onclick="return Delete()" style="width:100px"> Delete</button>
+                            <button id="btnBack" type="button" class="btn btn-primary" style="width:100px" onclick="location.href='@Url.Action("Index", "Ipmi")'"> Back To List</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#txtDate').datepicker({
+                autoclose: true,
+                orientation: "bottom left",
+                todayHighlight: true
+            });
+            //InitialConditions();
+            $("#cmbDept").val("@tIpmi.ke");
+        })
+        toastr.options = {
+            "positionClass": "toast-bottom-right",
+            "timeOut": "1000",
+            "preventDuplicates": true
+        }
+        function Delete() {
+            var txtIpmi = $("#txtIpmi").val();
+            if (txtIpmi == "") {
+                toastr.warning('No data to delete.')
+            }
+            else {
+                var saveUrl = '@Url.Action("Delete", "Ipmi")';
+                var newUrl = '@Url.Action("Index", "Ipmi")';
+                var models = {NoIPMI: txtIpmi};
+                $.ajax({
+                    type: "POST",
+                    url: saveUrl,
+                    data: {models},
+                    success: function (data) {
+                        if (data.success) {
+                            window.location.href = newUrl;
+
+                        } else {
+                            window.location.href = newUrl;
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+}

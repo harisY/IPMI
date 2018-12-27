@@ -1,0 +1,72 @@
+﻿@model IPMI.Models.Master.deptModels
+@using IPMI.Models
+@{
+    ViewBag.Title = "Department";
+}
+
+@using (Html.BeginForm())
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                @Html.AntiForgeryToken()
+                <div class="box-body">
+                    <div class="form-horizontal">
+                        <h4>Create Department</h4>
+                        <hr />
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left;">ID Department</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                @Html.EditorFor(model => model.IdDept,
+                              new { htmlAttributes = new { @class = "form-control", @id = "form_name" } })
+                                @Html.ValidationMessageFor(model => model.IdDept, "",
+                              new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left;">Nama Department</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                @Html.EditorFor(model => model.NamaDept,
+                              new { htmlAttributes = new { @class = "form-control", @id = "form_emial" } })
+                                @Html.ValidationMessageFor(model => model.NamaDept, "",
+                              new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-5">
+                                <button class="btn btn-primary" onclick="return Save()"><span class="fa fa-save"></span> Save</button>
+                                @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @section Scripts {
+        <script>
+            function Save() {
+                var IdDept = model => model.IdDept;
+                var NamaDept = model => model.NamaDept;
+                var url = "@Url.Action("Create","Dept")";
+                var model = {
+                    IdDept: IdDept,
+                    NamaDept: NamaDept
+                };
+                $.post(url, model);
+            }
+
+        </script>
+    }
+}
+
+
+

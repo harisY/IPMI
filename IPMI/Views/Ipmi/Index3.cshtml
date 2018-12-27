@@ -1,0 +1,82 @@
+﻿@model IEnumerable<IPMI.Entity.tIpmi>
+@using IPMI.Models;
+@{
+
+    ViewBag.Title = "Identifikasi Masalah - Verifikasi";
+    var no = 0;
+    string dari = ViewBag.Dari;
+
+}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <hr />
+                <table id="table" class="table table-bordered table-striped _table" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th style="width:10px; text-align:center;">No</th>
+                            <th style="width:60px; text-align:center;">Action</th>
+                            <th>No IPMI</th>
+                            <th>Tanggal</th>
+                            <th>Dari</th>
+                            <th>Ke</th>
+                            <th style="width:150px; text-align:center;">Masalah</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                        @foreach (var item in Model)
+                        {
+                            no++;
+                            <tr>
+                                <td class="_i">@no</td>
+                                <td style="text-align:center;">
+                                    <button class="btn btn-xs btn-info" title="View" onclick="location.href='@Url.Action("Verifikasi", "Ipmi")/@item.NoIPMI'"><span class="fa fa-pencil"></span></button>
+                                </td>
+                                <td class="_noipmi">@item.NoIPMI</td>
+                                <td class="_tgl">@item.Tgl</td>
+                                <td class="_dari">@item.Dari</td>
+                                <td class="_ke">@item.ke</td>
+                                <td class="_masalah">@item.Masalah</td>
+                                <td class="_status">@item.Status</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            DataTable();
+
+        })
+
+        function DataTable() {
+            $('#table').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                columnDefs: [{
+                    targets: 3, render: function (data) {
+                        return moment(data).format('L');
+                    }
+                }]
+            });
+        }
+        @*toastr.options = {
+            "positionClass": "toast-bottom-right",
+            "timeOut": "1000",
+            "preventDuplicates": true
+        }
+        if ("@message" != "0") {
+            toastr.success("Data Berhasil di simpan");
+        }*@
+    </script>
+}

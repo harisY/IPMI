@@ -1,0 +1,263 @@
+﻿@model IPMI.Models.FileModels
+@using IPMI.Models;
+@{
+    ViewBag.Title = "Identifikasi Masalah";
+    var ListDept = ViewBag.IdDept;
+    var AutoNo = ViewBag.AutoNO;
+
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="form-horizontal">
+                    <h4>Create New</h4>
+                    <hr />
+                    <div class="form-group">
+                        <input id="form_id" class="hidden" />
+                        <label class="col-md-1 control-label" style="text-align:left;">NO IPMI</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <input id="txtIpmi" class="form-control" disabled="disabled" value="@AutoNo" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left">Tanggal</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="txtDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left">Dari</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="txtDept" value="@ViewBag.Dari" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left">Tujuan</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <select id="cmbDept" class="form-control select2" style="width: 100%;">
+                                @foreach (var item in ListDept)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left;">Problem</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <textarea class="form-control" rows="3" id="txtProblem" style="resize:none"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left">Jumlah</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="txtJml">
+                        </div>
+                    </div>
+                    @*<section id="UploadForm">
+                            @using (Html.BeginForm("UploadToDB", "Ipmi", FormMethod.Post, new { enctype = "multipart/form-data", id="MyForm" }))
+                            {
+                                <input type="file" name="postedFile" multiple="multiple" />
+                                <input type="submit" id="btnUpload" value="Upload" />
+                            }
+
+                        </section>*@
+
+
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left">File</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <input type="file" id="fileUpload" multiple="multiple">
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-5">
+                            <button id="btnCreate" type="button" class="btn btn-primary" onclick="return Create()" style="width:100px"> Save</button>
+                            <button id="btnBack" type="button" class="btn btn-primary" style="width:100px" onclick="location.href='@Url.Action("Index", "Ipmi")'"> Back To List</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            maxlength();
+            $('#txtDate').datepicker({
+                autoclose: true,
+                orientation: "bottom left",
+                todayHighlight: true
+            });
+            InitialConditions();
+            $('.select2').select2()
+
+            //$("#myForm").submit();
+        })
+
+        toastr.options = {
+            "positionClass": "toast-bottom-right",
+            "timeOut": "1000",
+            "preventDuplicates": true
+        }
+
+        function UploadtoDB() {
+            $.ajax({
+                url: "/Ipmi/UploadToDB",
+                type: "POST",
+                data: function () {
+                    var data = new FormData();
+                    data.append("NoIpmi", jQuery("#txtIpmi").val());
+                    data.append("postedFile", jQuery("#fileUpload").get(0).files[0]);
+                    return data;
+                }(),
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                },
+                error: function (jqXHR, textStatus, errorMessage) {
+                    console.log(errorMessage);
+                }
+            });
+        }
+
+        function CreateUpload() {
+            var txtIpmi1 = $("#txtIpmi").val();
+            var data = new FormData();
+            @*var saveUrl = '@Url.Action("UploadToDB", "Ipmi")';*@
+            //var files = $("#fileUpload").get(0).files;
+            //for (var i = 0; i < files.length; i++) {
+            //    var newFileName = txtIpmi + "_" + files[i].name;
+            //    data.append(files[i].name, files[i], txtIpmi + "_" + files[i].name);
+            //}
+            var files = $("#fileUpload").get(0).files;
+            
+            for (var i = 0; i < files.length; i++) {
+                data.append("NoIpmi", txtIpmi1);
+                data.append("New", true);
+                data.append("postedFile", files[i]);
+            }
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("UploadToDB", "Ipmi")',
+                processData: false,
+                contentType: false,
+                data: data
+            });
+            //var ajaxRequest = $.ajax({
+            //    type: "POST",
+            //    url: saveUrl,
+            //    contentType: false,
+            //    processData: false,
+            //    data: data
+            //});
+            //ajaxRequest.done(function (xhr, textStatus) {
+            //    alert('Done');
+            //    // Do other operation
+
+            //});
+
+        }
+
+        function InitialConditions() {
+
+            $("#txtDate").val("");
+            $("#txtProblem").val("");
+            $("#txtJml").val("0");
+        }
+        function maxlength() {
+            $('#txtProblem').keypress(function () {
+                if (this.value.length >= 1000) // allowing you to enter only 10 chars.
+                    return false;
+            });
+        }
+        function Create() {
+            var txtIpmi = $("#txtIpmi").val();
+            //var cmbDept = $("#cmbDept option:selected").text();
+            var txtDept = $("#txtDept").val();
+            var txtDate = $("#txtDate").val();
+            var cmbDept = $("#cmbDept option:selected").val();
+            var txtProblem = $("#txtProblem").val();
+            var txtJml = $("#txtJml").val();
+            var IsExist = "0";
+            var FileName = "";
+            var fileInput = document.getElementById('fileUpload');
+
+            if (fileInput != "" || fileInput != null) {
+                var FileName = fileInput.value.split(/(\\|\/)/g).pop();
+                if (FileName != "") {
+                    IsExist = "1";
+                    CreateUpload();
+                }
+            } else {
+                IsExist = "0";
+            }
+            
+            if (txtIpmi == "") {
+                toastr.warning('No IPMI tidak boleh kosong')
+                $("#txtIpmi").focus();
+            }
+            else if (cmbDept == "0") {
+                toastr.warning('Pilih Department Tujuan')
+                $("#cmbDept").focus();
+            }
+            else if (txtDate == "") {
+                toastr.warning('Pilih Tanggal')
+                $("#txtDate").focus();
+            }
+            else if (txtProblem == "") {
+                toastr.warning('Problem canot be empty.')
+                $("#txtProblem").focus();
+            }
+            else {
+                //$("MyForm").submit();
+                //$("#UploadForm").trigger("submit");
+                var saveUrl = '@Url.Action("Create", "Ipmi")';
+                var newUrl = '@Url.Action("Index", "Ipmi")';
+                var models = {
+                    NoIPMI: txtIpmi,
+                    Tgl: txtDate,
+                    Dari: txtDept,
+                    Masalah: txtProblem,
+                    Jumlah: txtJml,
+                    Ke: cmbDept,
+                    FileName: IsExist,
+                    FileName1: "0",
+                };
+                $.ajax({
+                    type: "POST",
+                    url: saveUrl,
+                    data: models,
+                    success: function (data) {
+                        if (data.success) {
+                            //alert('Succes')
+                            //if (IsExist == "1") {
+                            //    CreateUpload();
+                            //}
+                            window.location.href = newUrl;
+                        } else {
+                            //alert("Error");
+                            window.location.href = saveUrl;
+                        }
+                    }
+                });
+
+            }
+        }
+    </script>
+}

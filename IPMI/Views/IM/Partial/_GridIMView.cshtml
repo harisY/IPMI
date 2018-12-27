@@ -1,0 +1,24 @@
+﻿@using IPMI.Models.IM
+@{
+    List<IMModels> Deatil = (List<IMModels>)ViewData["ListIMDetail"];
+    var no = 0;
+}
+<table id="table_view" class="table table-bordered table-striped _table" style="margin-top:10px">
+    <thead>
+        <tr>
+            <th style="width:10px; text-align:center;">No</th>
+            <th>Department Tujuan</th>
+        </tr>
+    </thead>
+    <tbody id="tbody_detail_view">
+        @foreach (var item in Deatil)
+        {
+            no++;
+            <tr>
+                <td class="_i">@no</td>
+                <td id="ke-@no" class="_ke">@item.Ke</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

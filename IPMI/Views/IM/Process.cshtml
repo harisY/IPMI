@@ -1,0 +1,477 @@
+﻿@using IPMI.Models
+@{
+    ViewBag.Title = "Identifikasi Masalah";
+    List<StandartComboBox> AddDept = (List<StandartComboBox>)ViewData["Dept"];
+    List<StandartComboBox> EditDept = (List<StandartComboBox>)ViewData["Dept"];
+    List<StandartComboBox> Dept = (List<StandartComboBox>)ViewData["Dept"];
+    List<StandartComboBox> ListDept = (List<StandartComboBox>)ViewData["ListDept"];
+    string No = ViewBag.AutoNO;
+}
+
+@*@Styles.Render("~/Scripts/adminlte/components/css")*@
+@*<link href="~/content/toastr.min.css" rel="stylesheet" />*@
+<style>
+    #cmbDept-options {
+        /* Set's the drop down options width to the same width as the drop down button */
+        width: 210px;
+        /* Set's the max-height property to only show a subset of the drop down items.
+       If you do not set a max-height property, SelectBoxIt will dynamically
+       position the dropdown (when opened) to make sure the drop down items are not
+       displayed outside of the current window viewport.
+    */
+        max-height: 240px;
+    }
+
+</style>
+<div id="MainForm">
+    <div id="tablegrid">
+        @Html.Partial("Partial/_GridProcess")
+    </div>
+</div>
+
+<div id="DetailForm" class="hidden">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <h3 id="title_form"></h3>
+                    <hr />
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <input id="form_id" class="hidden" />
+                            <label class="col-md-1 control-label" style="text-align:left;">NO IPMI</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                <input id="txtIpmi" class="form-control" disabled="disabled" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left">Tanggal</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" id="txtDate">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left">Dari</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" id="txtDept" value="@ViewBag.Dari" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left">Tujuan</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                <select id="cmbDept" class="form-control" required>
+                                    @foreach (var item in ListDept)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left;">Problem</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                <textarea class="form-control" rows="3" id="txtProblem" style="resize:none"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left">Jumlah</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" id="txtJml">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label id="lblFile" class="col-md-1 control-label" style="text-align:left">File</label>
+                            <label id="lblTick" class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" id="txtFile">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @*<label class="col-md-1 control-label" style="text-align:left">FIle</label>
+                                <label class="col-md-1 control-label">:</label>*@
+                            <div class="col-md-offset-2 col-md-5">
+                                <input type="file" id="fileUpload">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-5">
+                                <button id="btnCreate" type="button" class="btn btn-primary" onclick="return Create()"><span class="bold fa fa-floppy-o">&nbsp;&nbsp;Save</span></button>&nbsp;
+                                <button id="btnUpdate" type="button" class="btn btn-primary" onclick="return Edit()"><span class="bold fa fa-save">&nbsp;&nbsp;Update</span></button>&nbsp;
+                                <button type="button" id="btnBack" class="btn btn-primary" onclick="return InitialConditions()"><span class="bold fa fa-angle-left">&nbsp;&nbsp;Back To List</span></button>
+                            </div>
+                        </div>                      
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="DeletePopUp" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content  panel panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 class="modal-title">Delete Process</h2>
+            </div>
+            <div class="modal-body">
+                <h3 style="color:red;margin-top:-7px;">Are you sure you want to delete this?</h3>
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <input id="delete_id" class="hidden" />
+                        <label class="col-sm-3 col-md-4 control-label text-muted" style="text-align:left;">No IPMI</label>
+                        <label class="col-sm-1 col-md-1 control-label text-muted ">:</label>
+                        <label id="txtNoIpmi" class="col-sm-8 col-md-7 control-label text-muted" style="text-align:left;"></label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 col-md-4 control-label text-muted" style="text-align:left;">Department</label>
+                        <label class="col-sm-1 col-md-1 control-label text-muted ">:</label>
+                        <label id="txtDeptDel" class="col-sm-8 col-md-7 control-label text-muted" style="text-align:left;"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="return Delete()"><span class="bold fa fa-trash">&nbsp;&nbsp;Delete</span></button>&nbsp;
+                <button type="button" class="btn btn-default" data-dismiss="modal"><span class="bold fa fa-times">&nbsp;&nbsp;Cancel</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    @*@Scripts.Render("~/Scripts/adminlte/components/js")*@
+    @*@Scripts.Render("~/AdminLTE/plugins/select2/js")
+        <script src="~/Scripts/toastr.min.js"></script>
+        <script src="~/content/bootstrap-waitingfor.js"></script>*@
+    <script src="~/Scripts/jquery.signalR-2.3.0.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script>
+
+        $(document).ready(function () {
+            DataTable();
+            $('#txtDate').datepicker({
+                autoclose: true,
+                orientation: "bottom left",
+                todayHighlight: true
+            });
+        })
+
+
+        function Upload() {
+            var data = new FormData();
+            var files = $("#fileUpload").get(0).files;
+            // Add the uploaded image content to the form data collection
+            if (files.length > 0) {
+                data.append("UploadedImage", files[0]);
+            }
+            // Make Ajax request with the contentType = false, and procesDate = false
+            var ajaxRequest = $.ajax({
+                type: "POST",
+                url: "/IM/Upload",
+                contentType: false,
+                processData: false,
+                data: data
+            });
+            ajaxRequest.done(function (xhr, textStatus) {
+                // Do other operation
+            });
+
+        }
+        toastr.options = {
+            "positionClass": "toast-bottom-right",
+            "timeOut": "5000",
+            "preventDuplicates":true
+        }
+
+        function DataTable() {
+            $('#table').DataTable({
+                "columnDefs": [
+                    { "width": "50%", "targets": 5 },
+                    { "width": "10%", "targets": 1},
+                ],
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false
+                //"scrollX": true
+            });
+        }
+
+        function DataTableDetail() {
+            $('#table_detail').DataTable({
+                "paging": false,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": false,
+                "info": true,
+                "autoWidth": false
+            });
+        }
+
+        function InitialConditions() {
+            $("#MainForm").removeClass("hidden");
+            $("#DetailForm").addClass("hidden");
+            $("#txtIpmi").val("");
+            $("#txtDate").val("");
+            //$("#cmbDept").val("");
+            $("#txtProblem").val("");
+            $("#txtJml").val("");
+        }
+
+
+        function AddForm() {
+            var Id = "0";
+            var strDept = "";
+            //GetDetail(Id);
+            $("#txtIpmi").val("@No");
+            @*@foreach (var item in ListDept)
+            {
+                strDept = item.Text;
+            }
+            $("#cmbDept").val(strDept);
+            $("#txtProblem").val("");*@
+            $("#txtJml").val("0");
+            $("#title_form").html("Create New IM");
+            $("#MainForm").addClass("hidden");
+            $("#DetailForm").removeClass("hidden");
+            $("#btnCreate").removeClass("hidden");
+            $("#btnUpdate").addClass("hidden")
+            $("#tabledetailView").addClass("hidden");
+            $("#tabledetail").removeClass("hidden");
+            $("#txtFile").addClass("hidden");
+            $("#lblTick").addClass("hidden");
+            $("#lblFile").addClass("hidden");
+
+            $("#txtDate").removeAttr("disabled", "disabled");
+            $("#txtProblem").removeAttr("disabled", "disabled");
+            $("#txtJml").removeAttr("disabled","disabled");
+        }
+
+        function EditForm(data) {
+            var Id = data.closest("tr").find("._id").val();
+            var NoIpmi = data.closest("tr").find("._noipmi").text();
+            var Tgl = data.closest("tr").find("._tgl").text();
+            var tgl = Tgl.substring(0, 2);
+            var bulan = Tgl.substring(3, 5);
+            var tahun = Tgl.substring(6, 10);
+            var Dari = data.closest("tr").find("._dept").val();
+            var Masalah = data.closest("tr").find("._masalah").text();
+            var Jumlah = data.closest("tr").find("._jumlah").text();
+            var File = data.closest("tr").find("._file").text(); 
+            //var today = new Date();
+            //var dd = today.getDate();
+            //var mm = today.getMonth() + 1; //January is 0!
+            //var yyyy = today.getFullYear();
+            //if (tgl < 10) { tgl = '0' + tgl } if (bulan < 10) { bulan =  + bulan }
+            var today = bulan + '/' + tgl + '/' + tahun;
+            //document.getElementById("DATE").value = today;
+
+            //GetDetail(Id);
+            $("#title_form").html("Edit IM");
+            $("#MainForm").addClass("hidden");
+            $("#DetailForm").removeClass("hidden");
+            $("#btnCreate").addClass("hidden");
+            $("#btnUpdate").removeClass("hidden");
+            $("#tabledetailView").addClass("hidden");
+            $("#tabledetail").removeClass("hidden");
+            $("#txtFile").removeClass("hidden");
+            $("#lblTick").removeClass("hidden");
+            $("#lblFile").removeClass("hidden");
+
+            $("#txtIpmi").val(NoIpmi);
+            $("#txtDate").val(today);
+            $("#cmbDept").val(Dari);
+            $("#txtProblem").val(Masalah);
+            $("#txtJml").val(Jumlah);
+            $("#txtFile").val(File);
+
+            $("#txtDate").removeAttr("disabled", "disabled");
+            $("#txtProblem").removeAttr("disabled", "disabled");
+            $("#txtJml").removeAttr("disabled", "disabled");
+        }
+
+        function ViewForm(data) {
+            var Id = data.closest("tr").find("._id").val();
+            var NoIpmi = data.closest("tr").find("._noipmi").text();
+            var Tgl = data.closest("tr").find("._tgl").text();
+            var Dari = data.closest("tr").find("._dept").val();
+            var Ke = data.closest("tr").find("._ke").val();
+            var Masalah = data.closest("tr").find("._masalah").text();
+            var Jumlah = data.closest("tr").find("._jumlah").text(); 
+            //GetDetailView(Id);
+            $("#title_form").html("DETAIL IDENTIFIKASI MASALAH");
+            $("#MainForm").addClass("hidden");
+            $("#DetailForm").removeClass("hidden");
+            $("#btnCreate").addClass("hidden");
+            $("#btnUpdate").addClass("hidden");
+            $("#tabledetailView").removeClass("hidden");
+            $("#tabledetail").addClass("hidden");
+            $("#txtIpmi").val(NoIpmi);
+            $("#txtDate").val(Tgl);
+            $("#txtDept").val(Dari);
+            $("#cmbDept").text(Ke);
+            $("#txtProblem").val(Masalah);
+            $("#txtJml").val(Jumlah);
+
+            $("#txtDate").attr("disabled", "disabled");
+            $("#txtProblem").attr("disabled", "disabled");
+            $("#txtJml").attr("disabled", "disabled");
+        }
+
+        function DeletePopUp(data) {
+            $("#DeletePopUp").modal({ backdrop: 'static' });
+            var Id = data.closest("tr").find("._id").val();
+            var NoIpmi = data.closest("tr").find("._noipmi").text();
+            var Requester = data.closest("tr").find("._dari").text();
+            $("#delete_id").val(Id);
+            $("#txtNoIpmi").text(NoIpmi);
+            $("#txtDeptDel").text(Requester);
+        }
+
+        function Create() {
+            var txtIpmi = $("#txtIpmi").val();
+            //var cmbDept = $("#cmbDept option:selected").text();
+            var txtDept = $("#txtDept").val();
+            var txtDate = $("#txtDate").val();
+            var cmbDept = $("#cmbDept option:selected").val();
+            var txtProblem = $("#txtProblem").val();
+            var txtJml = $("#txtJml").val();
+
+            var fileInput = document.getElementById('fileUpload');
+            // Use a regular expression to pull the file name only
+            var FileName = fileInput.value.split(/(\\|\/)/g).pop();
+            if (FileName != "") {
+                Upload();
+            } else {
+                FileName = "";
+            }
+            if (txtIpmi == "") {
+                toastr.warning('No IPMI tidak boleh kosong')
+                $("#txtIpmi").focus();
+            }
+            else if (cmbDept == "0") {
+                toastr.warning('Pilih Department Tujuan')
+                $("#cmbDept").focus();
+            }
+            else if (txtDate == "") {
+                toastr.warning('Pilih Tanggal')
+                $("#txtDate").focus();
+            }
+            else if (txtProblem == "") {
+                toastr.warning('Problem canot be empty.')
+                $("#txtProblem").focus();
+            }
+            else {
+                var models= {
+                    NoIPMI: txtIpmi,
+                    Tgl: txtDate,
+                    Dari: txtDept, 
+                    Masalah: txtProblem,
+                    Jumlah: txtJml,
+                    Ke: cmbDept,
+                    FileName: FileName};
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("Create", "IM")',
+                    dataType: 'json',
+                    data: models,
+                    complete: function (result) {
+                        $("#tablegrid").html(result.responseText);
+                        toastr.success('Save Successfully.')
+                        InitialConditions();
+                        return DataTable();
+                    },
+                });
+
+            }
+        }
+
+        function Edit() {
+            var txtIpmi = $("#txtIpmi").val();
+            var cmbDept = $("#cmbDept option:selected").val();
+            var txtDept = $("#txtDept").val();
+            var txtDate = $("#txtDate").val();
+            var txtProblem = $("#txtProblem").val();
+            var txtJml = $("#txtJml").val();
+
+            var FileName = "";
+            var fileInput = document.getElementById('fileUpload');
+            if (fileInput != "" || fileInput != null) {
+                FileName = fileInput.value.split(/(\\|\/)/g).pop();
+                if (FileName != "") {
+                    Upload();
+                }
+            } else {
+                FileName = $('#txtFile').val();
+            }
+            // Use a regular expression to pull the file name only
+            if (cmbDept == "0") {
+                toastr.warning('Tujuan(Department) tidak boleh kosong')
+                $("#cmbDept").focus();
+            }
+            else if (txtDate == "") {
+                toastr.warning('Pilih Tanggal')
+                $("#txtDate").focus();
+            }
+            else {
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("Update", "IM")',
+                    data: {
+                        NoIpmi: txtIpmi,
+                        Tgl: txtDate,
+                        Dari: txtDept,
+                        Tujuan: cmbDept,
+                        Masalah: txtProblem,
+                        Jumlah: txtJml,
+                        FileName: FileName
+                    },
+                    complete: function (result) {
+                        $("#tablegrid").html(result.responseText);
+                        toastr.success('Update Successfully.')
+                        InitialConditions();
+                        return DataTable();
+                    },
+                });
+            }
+        }
+
+        function Delete() {
+            var Id = $("#delete_id").val();
+            if (Id == "") {
+                toastr.warning('No data to delete.')
+                $("#DeletePopUp").modal('hide');
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("DeleteProcess", "Master")',
+                    data: {
+                        Id: Id
+                    },
+                    complete: function (result) {
+                        $("#tablegrid").html(result.responseText);
+                        toastr.success('Delete Successfully.')
+                        $("#DeletePopUp").modal('hide');
+                        return DataTable();
+                    },
+                });
+            }
+        }
+
+    </script>
+}

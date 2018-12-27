@@ -1,0 +1,95 @@
+﻿@model IEnumerable<IPMI.Models.Master.deptModels>
+@{
+    ViewBag.Title = "LIST DEPARTMENTS";
+    var no = 0;
+}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <a href="@Url.Action("Create","Dept")" class="btn btn-primary"><span class="fa fa-plus"></span> Add New</a>
+                <hr />
+                <table id="table" class="table table-bordered table-striped table-condensed">
+                    <thead style="color:#357CA5">
+                        <tr>
+                            <th style="width:10px; text-align:center;">No</th>
+                            <th style="width:50px;">ID Dept</th>
+                            <th>Nama Department</th>
+                            <th style="width:40px; text-align:center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                        @foreach (var item in Model)
+                        {
+                            no++;
+                            <tr>
+                                <td class="_i">@no</td>
+                                <td class="_IdDept">@item.IdDept</td>
+                                <td>@item.NamaDept</td>
+                                <td style="text-align:center;">
+                                    @Html.ActionLink(" ", "Edit", new { IdDept = item.IdDept }, new { @class = "btn btn-xs btn-success fa fa-pencil" })
+                                    <button class="btn btn-xs btn-danger" type="button" title="Delete Parameter" onclick="Delete($(this))"><span class="fa fa-trash"></span></button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function ()
+        {
+            DataTable();
+        })
+        toastr.options = {
+            "positionClass": "toast-bottom-right",
+            "timeOut": "5000",
+            "preventDuplicates": true
+        }
+        function DataTable()
+        {
+            $('#table').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth":false
+            });
+        }
+
+        function Delete(data) {
+            var saveUrl = '@Url.Action("Delete", "Dept")';
+            var newUrl = '@Url.Action("Index", "Dept")';
+            var IdDept = data.closest("tr").find("._IdDept").text();
+            //alert(id);
+            if (confirm("Delete Data ?")) {
+                $.ajax({
+                    type: "POST",
+                    url: saveUrl,
+                    data: { IdDept: IdDept},
+                    success: function (data) {
+                        if (data.success) {
+                            //DataTable.ajax.reload();
+                            alert(data.message);
+                            window.location.reload();
+                            //toastr.success('Delete Successfully.')
+                            //alert(data.message);
+                            //window.location.href = newUrl;
+                            //$.notify(data.message, {
+                            //    globalPosition: "top center",
+                            //    className: "success"
+                            //})
+                        } else {
+                            alert(data.message);
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+    }

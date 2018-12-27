@@ -1,0 +1,325 @@
+﻿@model IEnumerable<IPMI.Models.ReportModels>
+@{
+    ViewBag.Title = "Laporan IPMI";
+    var i = 0;
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <table id="tbFilter" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th class="hidden"></th>
+                            @*<th style="width:7px; text-align:center;"></th>*@
+                            <th style="width:60px; text-align:center;">Action</th>
+                            <th style="width:150px;">Filter By</th>
+                            <th>Dari</th>
+                            <th>Ke</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th class="hidden">Field Type</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                        @foreach (var item in Model)
+                        {
+                            i++;
+                            <tr>
+                                <td class="hidden _i">@i</td>
+                                @*<td style="text-align:center;"><input id="cbRow-@i" class="_cbItem" type="checkbox" disabled="disabled" /></td>*@
+                                <td style="text-align:center;">
+                                    <button class="btn btn-xs btn-primary" title="Set Parameter" onclick="return ShowPopUp($(this))"><span class="fa fa-pencil"></span></button>&nbsp;
+                                    <button class="btn btn-xs btn-danger" title="Delete Parameter" onclick="return DeleteParameter($(this))"><span class="fa fa-trash"></span></button>
+                                </td>
+                                <td id="_FieldName-@i" class="_FieldName">@item.FieldName</td>
+                                <td class="_SamaDengan-@i _Clear"></td>
+                                <td class="_Ke-@i _Clear"></td>
+                                <td class="_From-@i _Clear"></td>
+                                <td class="_To-@i _Clear"></td>
+                                <td id="_FieldType-@i" class="_FieldType hidden">@item.Type</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="box-footer">
+                <button type="button" title="View Report" class="btn btn-primary" onclick="return ViewReport()" style="width:100px"> View Report</button>
+                <button data-dismiss="modal" type="button" title="Cancel" class="btn btn-danger" onclick="return Cancel()" style="width:100px"> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="PopUpSetParameter" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content  modal-primary">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Set Parameter</h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <input id="txtType" class="hidden" />
+                        <input id="txtI" class="hidden" />
+                    </div>
+                   
+                    <div class="form-group _NoBetween">
+                        <label class="col-sm-3 col-md-4 control-label text-muted" style="text-align:left;">Data</label>
+                        <label class="col-sm-1 col-md-1 control-label text-muted ">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            <select id="ddString" class="form-control _select2 hidden" style="width: 100%;"></select>
+                            <input id="txtNumber" type="number" class="form-control hidden" />
+                            <input id="txtDate" type="date" class="form-control hidden _Date" />
+                        </div>
+                    </div>
+                    <div class="form-group _Between hidden">
+                        <label class="col-sm-3 col-md-4 control-label text-muted" style="text-align:left;">From</label>
+                        <label class="col-sm-1 col-md-1 control-label text-muted ">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            @*<select id="ddStringFrom" class="form-control _select2 hidden" style="width: 100%;"></select>*@
+                            <input id="txtNumberFrom" type="number" class="form-control hidden" />
+                            <input id="txtDateFrom" type="date" class="form-control hidden _Date" />
+                        </div>
+                    </div>
+                    <div class="form-group _Between hidden">
+                        <label class="col-sm-3 col-md-4 control-label text-muted" style="text-align:left;">To</label>
+                        <label class="col-sm-1 col-md-1 control-label text-muted ">:</label>
+                        <div class="col-sm-8 col-md-7">
+                            @*<select id="ddStringTo" class="form-control _select2 hidden" style="width: 100%;"></select>*@
+                            <input id="txtNumberTo" type="number" class="form-control hidden" />
+                            <input id="txtDateTo" type="date" class="form-control hidden _Date" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="return SetParameter()" style="width:100px"><span class="bold fa fa-check">&nbsp;&nbsp;Ok</span></button>&nbsp;
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="width:100px"><span class="bold fa fa-times">&nbsp;&nbsp;Cancel</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+
+        $(document).ready(function () {
+            $('#tbFilter').DataTable({
+                "paging": false,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": false,
+                "info": true,
+                "autoWidth": false
+            });
+            //$(".select2").select2()
+            $("#ddString").select2({
+                dropdownParent: $("#PopUpSetParameter")
+            });
+            //$("#ddStringFrom").select2({
+            //    dropdownParent: $("#PopUpSetParameter")
+            //});
+        })
+        toastr.options = {
+            "positionClass": "toast-top-center",
+            "timeOut": "2000",
+            "preventDuplicates": true
+        }
+        function InitialConditions() {
+            $("#ddString").val("");
+            $("#ddStringFrom").val("");
+            //$("#ddStringTo").val("");
+            $("#txtnumber").val("");
+            $("#txtnumberFrom").val("");
+            $("#txtnumberTo").val("");
+            $("._Date").val("");
+            $("._Between").addClass("hidden");
+            $("._NoBetween").removeClass("hidden");
+            //$(".select2").select2();
+
+        }
+
+        function ClearddString() {
+            var data = document.getElementById('ddString');
+            //var form = document.getElementById('ddStringFrom');
+            //var to = document.getElementById('ddStringTo');
+
+            while (data.firstChild) {
+                data.removeChild(data.firstChild)
+            }
+            //while (form.firstChild) {
+            //    form.removeChild(form.firstChild)
+            //}
+            //while (to.firstChild) {
+            //    to.removeChild(to.firstChild)
+            //}
+        }
+
+        function ShowPopUp(data) {
+            InitialConditions();
+            ClearddString();
+            var Nomor = data.closest("tr").find("._i").text();
+            var Name = data.closest("tr").find("._FieldName").text();
+            var type = data.closest("tr").find("._FieldType").text();
+            $("#txtI").val(Nomor);
+            $("#txtType").val(type);
+            if (type == "1" || type == "2") {
+
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("GetParameter1", "Reports")',
+                    data: {
+                        FieldName: Name
+                    },
+                    success: function (result) {
+                        if (result != "") {
+                            for (var i = 0 ; i < result.length ; i++) {
+                                var value = result[i].Value;
+                                var text = result[i].Text;
+                                $("#ddString").append("<option value = " + value + ">" + text + "</option>")
+                                //$("#ddStringFrom").append("<option val = '" + value + "'>" + text + "</option>")
+                                //$("#ddStringTo").append("<option val = '" + value + "'>" + text + "</option>")
+
+                                //$("#ddString").select2({
+                                //    dropdownParent: $("#PopUpSetParameter")
+                                //});
+                                //$("#ddStringFrom").select2({
+                                //    dropdownParent: $("#PopUpSetParameter")
+                                //});
+                            }
+                        }
+                        $("#ddString").removeClass("hidden");
+                        //$("#ddStringFrom").addClass("hidden");
+                        $("#ddStringTo").addClass("hidden");
+                        $("#txtNumber").addClass("hidden");
+                        $("#txtDate").addClass("hidden");
+                        $("._Between").addClass("hidden");
+                        $("._NoBetween").removeClass("hidden");
+                        $('#PopUpSetParameter').modal({ backdrop: 'static' });
+                    },
+                });
+            }
+            else if (type == "3") {
+                $("#ddString").addClass("hidden");
+                //$("#ddStringFrom").addClass("hidden");
+                $("#ddStringTo").addClass("hidden");
+                $("#txtNumber").addClass("hidden");
+                $("#txtNumberFrom").addClass("hidden");
+                $("#txtNumberTo").addClass("hidden");
+                $("#txtDateFrom").removeClass("hidden");
+                $("#txtDateTo").removeClass("hidden");
+                $("._Between").removeClass("hidden");
+                $("._NoBetween").addClass("hidden");
+                $('#PopUpSetParameter').modal({ backdrop: 'static' });
+            }
+        }
+
+        function SetParameter() {
+            //alert("Selected value is: " + $("._select2").val());
+            var i = $("#txtI").val();
+            var Type = $("#txtType").val();
+            var DateFrom = $("#txtDateFrom").val();
+            var DateTo = $("#txtDateTo").val();
+            var StringTo = $("#ddStringTo").val();
+            var NumberFrom = $("#txtDateFrom").val();
+            var NumberTo = $("#txtDateTo").val();
+            var DtString = $("#ddString").val();
+            var DtNumber = $("#txtNumber").val();
+            var DtDate = $("#txtDate").val();
+            var tes = $("#ddString").select2("val"); 
+            if (Type == "1") {
+                $("._SamaDengan-" + i + "").text(DtString);
+            } else if (Type == "2") {
+                $("._Ke-" + i + "").text(DtString);
+            }else {
+                $("._From-" + i + "").text(DateFrom);
+                $("._To-" + i + "").text(DateTo);
+            }
+        }
+
+        function DeleteParameter(data) {
+            var i = data.closest("tr").find("._i").text();
+            $("._From-" + i + "").text("");
+            $("._To-" + i + "").text("");
+            $("._SamaDengan-" + i + "").text("");
+            $("._Ke-" + i + "").text("");
+        }
+
+        function ViewReport() {
+
+            var Dari = "";
+            var Ke = "";
+            var TanggalFrom = "";
+            var TanggalTo = "";
+            var Separator = ";";
+            var Count = $('#tbody tr').length;
+            for (var i = 1; i <= Count; i++) {
+
+                if (i == 1) {
+                    Dari = $("._SamaDengan-" + i).text();
+                }
+                else {
+                    Dari = Dari + Separator + $("._SamaDengan-" + i).text();
+                }
+                if (i == 1) {
+                    Ke = $("._Ke-" + i).text();
+                }
+                else {
+                    Ke = Ke + Separator + $("._Ke-" + i).text();
+                }
+                if (i == 1) {
+                    TanggalFrom = $("._From-" + i).text();
+                }
+                else {
+                    TanggalFrom = TanggalFrom + Separator + $("._From-" + i).text();
+                }
+                if (i == 1) {
+                    TanggalTo = $("._To-" + i).text();
+                }
+                else {
+                    TanggalTo = TanggalTo + Separator + $("._To-" + i).text();
+                }
+
+            }
+            var d = Dari.replace(/;/g, "");
+            var k = Ke.replace(/;/g, "");
+            //var f = TanggalFrom.replace(/;/g, "");
+            //var t = TanggalTo.replace(/;/g, "");
+            if (d == "") {
+                toastr.warning("Parameter report Dari (Departemen) kosong !")
+            } else if (k == "") {
+                toastr.warning("Parameter report Ke (Departemen) kosong !")
+            } else {
+                $.ajax({
+                type: "POST",
+                url: '@Url.Action("ShowLaporanAIPMI_New", "Reports")',
+                data: {
+                    Dari: d,
+                    Ke: k,
+                    From: TanggalFrom,
+                    To: TanggalTo
+                },
+                success: function (data) {
+                    if (!data.result) {
+                        alert("Error");
+                    }
+                    else {
+                        window.open("../Report/rptIM.aspx", '_blank');
+                    }
+                }
+            });
+            }
+            
+        }
+
+        function Cancel() {
+            //$("._cbItem").prop("checked", false);
+            $("._Clear").text("");
+        }
+
+    </script>
+}
+

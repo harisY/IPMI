@@ -1,0 +1,181 @@
+﻿@using IPMI.Models.Analisa
+@model AnalisaModels
+@{
+    ViewBag.Title = "Edit";
+
+    List<AnalisaModels> list = (List<AnalisaModels>)ViewData["ListAnalisaByNoIpmi"];
+    var NoIPmi = "";
+    var Penyebab = "";
+    var Perbaikan = "";
+    var Target = "";
+    var PIC = "";
+    var TglAktual = "";
+
+    foreach (var item in list)
+    {
+        NoIPmi = item.NoIPMI;
+        Penyebab = item.Penyebab;
+        Perbaikan = item.RPerbaikan;
+        Target = item.Target;
+        PIC = item.PIC;
+        TglAktual = item.TglActual;
+    }
+}
+
+<div id="CreateForm">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <h3 id="title_form"></h3>
+                    <hr />
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <input id="form_id" class="hidden" />
+                            <label class="col-md-1 control-label" style="text-align:left;">NO IPMI</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                <input id="txtIpmi" class="form-control" disabled="disabled" value="@NoIPmi" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left">Penyebab</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                <textarea class="form-control" rows="2" id="txtPenyebab" style="resize:none">@Penyebab</textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left;">R. Perbaikan</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                <input type="text" input id="txtPerbaikan" class="form-control" value="@Perbaikan" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left">Target</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" id="txtTarget" value="@Target">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left">PIC</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" id="txtPIC" value="@PIC">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" style="text-align:left">Tgl Aktual</label>
+                            <label class="col-md-1 control-label">:</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" id="txtTgl" value="@TglAktual">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-5">
+                                <button class="btn btn-primary" onclick="return Edit()"><span class="fa fa-save"></span> Save</button>
+                                @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*<div class="box-footer">
+                    <div class="col-md-offset-2 col-md-5">
+                        <button id="btnCreate" type="button" class="btn btn-primary" onclick="return Create()"><span class="bold fa fa-floppy-o">&nbsp;&nbsp;Save</span></button>&nbsp;
+                        <button id="btnUpdate" type="button" class="btn btn-primary" onclick="return Edit()"><span class="bold fa fa-save">&nbsp;&nbsp;Update</span></button>&nbsp;
+                        <button type="button" id="btnBack" class="btn btn-primary" onclick=""><span class="bold fa fa-angle-left">&nbsp;&nbsp;Back To List</span></button>
+                    </div>
+                </div>*@
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#txtTgl').datepicker({
+                autoclose: true,
+                orientation: "top left",
+                todayHighlight: true
+            });
+            //InitialConditions();
+            $("#txtPenyebab").focus();
+        })
+
+        toastr.options = {
+            "positionClass": "toast-bottom-right",
+            "timeOut": "5000",
+            "preventDuplicates": true
+        }
+        function InitialConditions() {
+            $("#txtPenyebab").val("");
+            $("#txtPerbaikan").val("");
+            $("#txtTarget").val("");
+            $("#txtPIC").val("");
+            $("#txtPenyebab").focus();
+        }
+
+        function Edit() {
+            var saveUrl = '@Url.Action("Edit","Analisa")';
+            var newUrl = '@Url.Action("Index","Analisa")';
+            var NoIpmi = $("#txtIpmi").val();
+            var Penyebab = $("#txtPenyebab").val();
+            var Perbaikan = $("#txtPerbaikan").val();
+            var Target = $("#txtTarget").val();
+            var PIC = $("#txtPIC").val();
+            var Tgl = $("#txtTgl").val();
+
+            if (Penyebab == "") {
+                toastr.warning('Penyebab empty !')
+                $("#txtPenyebab").focus();
+            } else if (Perbaikan == "") {
+                toastr.warning('Rencana Perbaikan empty !')
+                $("#txtPerbaikan").focus();
+            } else if (Target == "") {
+                toastr.warning('Target empty !')
+                $("#txtTarget").focus();
+            } else if (PIC == "") {
+                toastr.warning('PIC empty !')
+                $("#txtPIC").focus();
+            } else if (Tgl == "") {
+                toastr.warning('Tanggal empty !')
+                $("#txtTgl").focus();
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: saveUrl,
+                    data: {
+                        NoIpmi: NoIpmi,
+                        Penyebab: Penyebab,
+                        RPerbaikan: Perbaikan,
+                        Target: Target,
+                        PIC: PIC,
+                        Tgl: Tgl
+                    },
+                    success: function (data) {
+                        if (data.success)
+                            window.location.href = newUrl;
+                        //toastr.success(data.message)
+                    }
+                });
+                @*var url = "@Url.Action("Edit","Analisa")";
+                var model = {
+                    NoIpmi: NoIpmi,
+                    Penyebab: Penyebab,
+                    RPerbaikan: Perbaikan,
+                    Target: Target,
+                    PIC: PIC,
+                    Tgl: Tgl
+                };
+                $.post(url, model);*@
+            }
+
+        }
+    </script>
+}
+

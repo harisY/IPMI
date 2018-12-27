@@ -1,0 +1,283 @@
+﻿@model IEnumerable<IPMI.Entity.tIpmi>
+@using IPMI.Entity;
+@{
+    ViewBag.Title = "Identifikasi Masalah";
+    var ListDept = ViewBag.IdDept;
+    tIpmi tIpmi = (tIpmi)ViewData["ListIpmi"];
+    tIpmiAnalisa analisa = (tIpmiAnalisa)ViewData["ListAnalisa"];
+
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="form-horizontal">
+                    <h4>Verifikasi</h4>
+                    <hr />
+                    <div class="col-sm-12 col-md-12">
+                        <div class="col-sm-6 col-md-6">
+
+                            <div class="form-group">
+                                <input id="form_id" class="hidden" />
+                                <label class="col-md-3 control-label" style="text-align:left;">NO IPMI</label>
+                                <label class="col-md-1 control-label">:</label>
+                                <div class="col-md-8">
+                                    <input id="txtIpmi" class="form-control" disabled="disabled" value="@tIpmi.NoIPMI" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="text-align:left">Tanggal</label>
+                                <label class="col-md-1 control-label">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="txtDate" disabled="disabled" value="@tIpmi.Tgl">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="text-align:left">Dari</label>
+                                <label class="col-md-1 control-label">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="txtDept" value="@tIpmi.Dari" disabled="disabled">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="text-align:left">Tujuan</label>
+                                <label class="col-md-1 control-label">:</label>
+                                <div class="col-md-8">
+                                    <select id="cmbDept" class="form-control" disabled="disabled" required>
+                                        @foreach (var item in ListDept)
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="text-align:left;">Problem</label>
+                                <label class="col-md-1 control-label">:</label>
+                                <div class="col-md-8">
+                                    <textarea class="form-control" rows="3" id="txtProblem" style="resize:none" disabled="disabled">@tIpmi.Masalah</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="text-align:left">Jumlah</label>
+                                <label class="col-md-1 control-label">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="txtJml" value="@tIpmi.Jumlah" disabled="disabled">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label id="lblFile" class="col-md-3 control-label" style="text-align:left">File</label>
+                                <label id="lblTick" class="col-md-1 control-label">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="txtFile" value="@tIpmi.FileName" disabled="disabled">
+                                </div>
+                            </div>
+
+                            @*<div class="form-group">
+                                    <div class="col-md-offset-2 col-md-5">
+                                        <button id="btnCreate" type="button" class="btn btn-primary" onclick="return Verifikasi()" style="width:100px"> Verifikasi</button>
+                                        <button id="btnBack" type="button" class="btn btn-primary" style="width:100px" onclick="location.href='@Url.Action("Index", "Ipmi")'"> Back To List</button>
+                                    </div>
+                                </div>*@
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="text-align:left">Penyebab</label>
+                                <label class="col-md-1 control-label">:</label>
+                                <div class="col-md-8">
+                                    <textarea class="form-control" rows="2" id="txtPenyebab" style="resize:none" disabled="disabled">@analisa.Penyebab</textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="text-align:left;">R. Perbaikan</label>
+                                <label class="col-md-1 control-label">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" input id="txtPerbaikan" class="form-control" value="@analisa.RencanaPerbaikan" disabled="disabled" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="text-align:left">Target</label>
+                                <label class="col-md-1 control-label">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="txtTarget" value="@analisa.Target" disabled="disabled">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="text-align:left">PIC</label>
+                                <label class="col-md-1 control-label">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="txtPIC" value="@analisa.PIC" disabled="disabled">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="text-align:left">Tgl Aktual</label>
+                                <label class="col-md-1 control-label">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="txtTgl" value="@analisa.TglActual" disabled="disabled">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer">
+                <div class="form-group">
+                    <div class="text-center">
+                        <button id="btnCreate" type="button" class="btn btn-success" onclick="return Verifikasi()" style="width:100px"> Verified</button>
+                        <button type="button" title="Unverified" class="btn btn-danger" onclick=" return ShowPopup()" style="width:100px"> Unverified</button>
+                        <button id="btnBack" type="button" class="btn btn-primary" style="width:100px" onclick="location.href='@Url.Action("Index", "Ipmi")'"> Back To List</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content modal-primary">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Tell why ?</h4>
+            </div>
+            <div class="panel-body">
+                <form>
+                    <div class="form-group">
+                        <label for="recipient-name" class="control-label">Comment:</label>
+                        <textarea id="txtComment" name="txtComment" class="form-control" data-required="true" style="resize:none"></textarea>
+                        @*<input type="text" class="form-control" id="recipient-name">*@
+                    </div>
+                    <div class="form-group">
+                        @*<label class="control-label">File:</label>*@
+                        <input type="file" id="fileUpload" multiple="multiple">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="width:70px">Close</button>
+                <button type="button" class="btn btn-default" onclick="return Unverified()" style="width:70px">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#txtDate').datepicker({
+                autoclose: true,
+                orientation: "bottom left",
+                todayHighlight: true
+            });
+            //InitialConditions();
+            $("#cmbDept").val("@tIpmi.ke");
+
+            
+        })
+        toastr.options = {
+            "positionClass": "toast-bottom-right",
+            "timeOut": "2000",
+            "preventDuplicates": true
+        }
+
+        function UploadToDB_Verifikasi() {
+            var txtIpmi1 = $("#txtIpmi").val();
+            var data = new FormData();
+            var files = $("#fileUpload").get(0).files;
+
+            for (var i = 0; i < files.length; i++) {
+                data.append("NoIpmi", txtIpmi1);
+                data.append("New", false);
+                data.append("postedFile", files[i]);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("UploadToDB", "Ipmi")',
+                contentType: false,
+                processData: false,
+                data: data
+            });
+
+        }
+
+        function ShowPopup() {
+            $('#exampleModal').on('shown.bs.modal', function () {
+                $('#txtComment').focus();
+            });
+            $("#exampleModal").modal({ backdrop: 'static' });
+        }
+        function Verifikasi() {
+            var txtIpmi = $("#txtIpmi").val();
+            
+            if (txtIpmi == "") {
+                toastr.warning('No data to delete.')
+            }
+            else {
+                var saveUrl = '@Url.Action("Verifikasi", "Ipmi")';
+                var newUrl = '@Url.Action("Index3", "Ipmi")';
+                var models = {NoIPMI: txtIpmi};
+                $.ajax({
+                    type: "POST",
+                    url: saveUrl,
+                    data: {models},
+                    success: function (data) {
+                        if (data.success) {
+                            
+                            window.location.href = newUrl;
+
+                        } else {
+                            window.location.href = newUrl;
+                        }
+                    }
+                });
+            }
+        }
+
+        function Unverified() {
+            var comment = $("#txtComment").val();
+            var fileInput = document.getElementById('fileUpload');
+            var txtIpmi = $("#txtIpmi").val();
+            var IsExist = "0";
+            if (fileInput != "" || fileInput != null) {
+                var FileName1 = fileInput.value.split(/(\\|\/)/g).pop();
+                if (FileName1 != "") {
+                    IsExist = "1";
+                    UploadToDB_Verifikasi();
+                }
+            } else {
+                IsExist = "0";
+            }
+
+
+            if (txtIpmi == "") {
+                toastr.warning('No Ipmi tidak ada !')
+            }else if(comment == "") {
+                toastr.warning('Comment harap di isi !')
+                $("#txtComment").focus();
+            } else {
+                var saveUrl = '@Url.Action("UnVerifikasi", "Ipmi")';
+                var newUrl = '@Url.Action("Index3", "Ipmi")';
+                var models = { NoIPMI: txtIpmi, Ket: comment, FileName1: IsExist};
+                $.ajax({
+                    type: "POST",
+                    url: saveUrl,
+                    data: {models},
+                    success: function (data) {
+                        if (data.success) {
+                            
+                            window.location.href = newUrl;
+
+                        } else {
+                            window.location.href = newUrl;
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+}
+
