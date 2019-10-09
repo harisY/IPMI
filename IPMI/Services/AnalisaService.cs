@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
 using System.Linq;
 using System.Web;
 using IPMI.Entity;
 using IPMI.Repository;
+using LibDataAccess;
 namespace IPMI.Services
 {
     public partial class AnalisaService
     {
         private GenericRepository<tIpmiAnalisa> AnalisaRepository;
         private GenericRepository<tIpmi> IpmiRepository;
+        MyLib myLib = new MyLib();
+        string conn = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public AnalisaService()
         {
@@ -50,8 +55,17 @@ namespace IPMI.Services
         }
         public tIpmiAnalisa GetbyID(object[] parameters)
         {
-            string spQuery = "[Get_AnalisaByID] {0}";
-            return AnalisaRepository.ExecuteQuerySingle(spQuery, parameters);
+            try
+            {
+                string spQuery = "[Get_AnalisaByID] {0}";
+                return AnalisaRepository.ExecuteQuerySingle(spQuery, parameters);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            
         }
 
         public int Insert(object[] parameters)
@@ -79,6 +93,47 @@ namespace IPMI.Services
         {
             string spQuery = "[Get_AutoNo] {0}";
             return AnalisaRepository.ExecuteQuerySingle1(spQuery, parameters);
+        }
+
+        public bool IsFileExist(string NoIpmi)
+        {
+            bool IsExist;
+            try
+            {
+                string que = @"SELECT Top 1 NoIpmi From tFile where NoIPMI = '" + NoIpmi + "' AND Type=2";
+                DataTable dt = new DataTable();
+                myLib.strConn = conn;
+                dt = myLib.GetDataTable(que);
+                if (dt.Rows.Count > 0)
+                {
+                    IsExist = true;
+                }
+                else
+                {
+                    IsExist = false;
+                }
+                return IsExist;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public void UpdateFileAnalisa(string NoIpmi)
+        {
+            try
+            {
+                string que = @"UPDATE tIpmi SET FileAnalisa =1 WHERE NoIpmi='" + NoIpmi + "'";
+                myLib.strConn = conn;
+                myLib.ExecQuery(que);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
     }
 }

@@ -12,7 +12,11 @@ using System.IO;
 using System.IO.Compression;
 using System.Configuration;
 using System.Data.SqlClient;
-using Ionic.Zip;
+using ICSharpCode.SharpZipLib.Zip;
+using System.Net.Mail;
+using System.Net;
+using System.Text;
+using System.Data;
 
 namespace IPMI.Controllers
 {
@@ -72,7 +76,8 @@ namespace IPMI.Controllers
                 object[] param = { models.NoIPMI };
                 result1 = objIpmi.UpdateStatusIpmi(param);
                 if (result1 == 1)
-                {
+                {                
+                    
                     this.AddToastMessage("IPMI", "Data berhasil di simpan !", ToastType.Success);
                     return Json(new { success = true }, JsonRequestBehavior.AllowGet);
                 }
@@ -96,11 +101,21 @@ namespace IPMI.Controllers
             object[] parameters = { id };
             ViewData["ListAnalisa"] = ObjAnalisa.GetbyID(parameters);
             return View();
+            //string query = (ViewData["ListAnalisa"] ?? string.Empty) as string;
+            //if (string.IsNullOrEmpty(query))
+            //{
+            //    this.AddToastMessage("IPMI", "Silahkan Edit dulu data di tab buat baru !", ToastType.Warning);
+            //    return null;
+            //}
+            //else
+            //{
+            //    return View();
+            //}            
         }
 
         // POST: Analisa1/Edit/5
         [HttpPost]
-        public ActionResult Edit(tIpmiAnalisa models)
+        public ActionResult Edit(tIpmiAnalisa models, bool IsExist)
         {
             int result = 0;
             int result1 = 0;
@@ -116,6 +131,55 @@ namespace IPMI.Controllers
                 result1 = ObjAnalisa.UpdateStatusIpmi(param);
                 if (result1 == 1)
                 {
+                    if (IsExist)
+                    {
+                        ObjAnalisa.UpdateFileAnalisa(models.NoIPMI);
+                    }
+
+                    string Dari = string.Empty;
+                    string Masalah = string.Empty;
+                    string Ke = string.Empty;
+                    DataTable dt = new DataTable();
+                    dt = objIpmi.GetIpmiByNo(models.NoIPMI);
+                    if (dt.Rows.Count > 0)
+                    {
+                        Dari = dt.Rows[0][0].ToString();
+                        Masalah = dt.Rows[0][2].ToString();
+                        Ke = dt.Rows[0][1].ToString();
+
+                        string email = string.Empty;
+                        email = objIpmi.GetEmailAnalisa(Dari);
+
+                        //MailMessage mail = new MailMessage("ipmi@tsmu.co.id", email);
+                        MailMessage mail = new MailMessage();
+                        mail.IsBodyHtml = true;
+                        mail.From = new MailAddress("ipmi@tsmu.co.id", "IPMI");
+                        mail.To.Add(new MailAddress(email));
+                        var smpt = new SmtpClient
+                        {
+                            Host = "mail.tsmu.co.id",
+                            Port = 25,
+                            EnableSsl = false,
+                            DeliveryMethod = SmtpDeliveryMethod.Network,
+                            Credentials = new NetworkCredential("ipmi@tsmu.co.id", "svPyyO(++6cj"),
+                            Timeout = 20000
+                        };
+                        var body = new StringBuilder();
+                        body.AppendFormat("Analisa dan Perbaikan masalah :");
+                        body.AppendLine(@"<br />>Dari =" + Ke);
+                        body.AppendLine(@"<br />>Masalah =" + Masalah);
+                        body.AppendLine(@"<br />>Penyebab =" + models.Penyebab);
+                        body.AppendLine(@"<br />>Rencana Perbaikan =" + models.RencanaPerbaikan);
+                        body.AppendLine("<br /><a href='https://srv02.tsmu.co.id/ipmi/Account/Login?ReturnUrl=%2Fipmi%2F'>Klik di sini untuk Login</a>");
+                        mail.Body = body.ToString();
+                        string emailSubject = "IPMI Notification " + models.NoIPMI;
+                        mail.Subject = emailSubject;
+                        //mail.Body = @"Masalah sudah di analisa : <br /> > Dari =" + models.Dari + "<br /> > Msalah = " + models.Masalah + "<br /> <a href='https://srv02.tsmu.co.id/ipmi/Account/Login?ReturnUrl=%2Fipmi%2F'>Klik di sini untuk Login</a>";
+                        mail.IsBodyHtml = true;
+                        mail.CC.Add("log@tsmu.co.id");
+                        smpt.Send(mail);
+                    }
+                  
                     this.AddToastMessage("IPMI", "Data berhasil di update !", ToastType.Success);
                     return Json(new { success = true }, JsonRequestBehavior.AllowGet);
                 }
@@ -137,6 +201,7 @@ namespace IPMI.Controllers
         public ActionResult Delete(string id)
         {
             object[] parameters = { id };
+            ObjAnalisa = new AnalisaService();
             ViewData["ListAnalisa"] = ObjAnalisa.GetbyID(parameters);
             return View();
         }
@@ -197,6 +262,13 @@ namespace IPMI.Controllers
             object[] dept = { NamaDept };
             var result = ObjAnalisa.GetAll_OnProgress(dept);
             return View(result);
+        }
+
+        public ActionResult IndexDownload(string NoIpmi, int Type)
+        {
+            ViewBag.NoIpmi = NoIpmi;
+            ViewBag.Type = Type;
+            return View();
         }
         #endregion
 
@@ -299,57 +371,188 @@ namespace IPMI.Controllers
         }
         public FileResult DownloadMultipleFiles(string NoIpmi,int Type)
         {
-            FileDownloads obj = new FileDownloads();
-            var filesCol = obj.GetFile1(NoIpmi,Type).ToList();
-            using (MemoryStream ms = new MemoryStream())
+            try
             {
-                using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                FileDownloads obj = new FileDownloads();
+                var filesCol = obj.GetFile1(NoIpmi, Type).ToList();
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    foreach (var file in filesCol)
+                    using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
                     {
-                        var entry = archive.CreateEntry(file.Name, CompressionLevel.Fastest);
-                        using (var zipStream = entry.Open())
+                        foreach (var file in filesCol)
                         {
-                            zipStream.Write(file.Data, 0, file.Data.Length);
+                            var entry = archive.CreateEntry(file.Name, CompressionLevel.Fastest);
+                            using (var zipStream = entry.Open())
+                            {
+                                zipStream.Write(file.Data, 0, file.Data.Length);
+                            }
                         }
+                    }
+
+                    return File(ms.ToArray(), "application/octet-stream", "Attachments.zip");
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            
+        }
+
+        [HttpPost]
+        public ActionResult DownloadMultipleFiles1(string NoIpmi, int Type)
+        {
+            try
+            {
+                FileDownloads obj = new FileDownloads();
+                var filesCol = obj.GetFile1(NoIpmi, Type).ToList();
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                    {
+                        foreach (var file in filesCol)
+                        {
+                            var entry = archive.CreateEntry(file.Name, CompressionLevel.Fastest);
+                            using (var zipStream = entry.Open())
+                            {
+                                zipStream.Write(file.Data, 0, file.Data.Length);
+                            }
+                        }
+                    }
+
+                    return File(ms.ToArray(), "application/octet-stream", NoIpmi +".zip");
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            
+        }
+        public ActionResult ZipDownload(string NoIpmi, int Type)
+        {
+            FileDownloads obj = new FileDownloads();
+            var filesCol = obj.GetFile1(NoIpmi, Type).ToList();
+            Ionic.Zip.ZipFile zip = new Ionic.Zip.ZipFile();
+            foreach (var file in filesCol)
+            {
+
+                zip.AddEntry(file.Name, (byte[])file.Data.ToArray());
+            }
+            var zipMs = new MemoryStream();
+            zip.Save(zipMs);
+            byte[] fileData = zipMs.GetBuffer();
+            zipMs.Seek(0, SeekOrigin.Begin);
+            zipMs.Flush();
+            Response.Clear();
+            Response.AddHeader("content-disposition", "attachment;filename=Attachments.zip ");
+            Response.ContentType = "application/zip";
+            Response.BinaryWrite(fileData);
+            Response.End();
+            return new EmptyResult();
+        }
+        public FileResult DownloadFiles(string NoIpmi, int Type)
+        {
+            //Define file Type
+            string fileType = "application/octet-stream";
+            //string fileType = "application/zip";
+            //Define Output Memory Stream
+            var outputStream = new MemoryStream();
+
+            FileDownloads obj = new FileDownloads();
+            var filesCol = obj.GetFile1(NoIpmi, Type).ToList();
+            //Create object of ZipFile library
+            using (Ionic.Zip.ZipFile zipFile = new Ionic.Zip.ZipFile())
+            {
+               
+                foreach (var file in filesCol)
+                {
+                  
+                    zipFile.AddEntry(file.Name, (byte[])file.Data.ToArray());
+                }
+
+                Response.ClearContent();
+                Response.ClearHeaders();
+
+                //Set zip file name
+                //Response.AppendHeader("content-disposition", "attachment; filename=Attachments.zip");
+                Response.AddHeader("content-disposition", "attachment; filename=Attachments.zip");
+                //Save the zip content in output stream
+                Int64 fileSizeInBytes = filesCol.Count;
+                Response.AddHeader("Content-Length", fileSizeInBytes.ToString());
+                zipFile.Save(outputStream);
+            }
+
+            //Set the cursor to start position
+            outputStream.Position = 0;
+
+            //Dispance the stream
+            return new FileStreamResult(outputStream, fileType);
+        }
+
+        [HttpPost]
+        public ActionResult UploadToDB(List<HttpPostedFileBase> postedFile, string NoIpmi, bool New)
+        {
+
+            string constr = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                if (New)
+                {
+                    string que = "Delete from tfile where NoIpmi=@No And Type = 2";
+                    using (SqlCommand cmd = new SqlCommand(que))
+                    {
+                        cmd.Connection = con;
+                        cmd.Parameters.AddWithValue("@No", NoIpmi);
+
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        con.Close();
                     }
                 }
 
-                return File(ms.ToArray(), "application/zip", "Attachments.zip");
             }
+
+            foreach (HttpPostedFileBase File in postedFile)
+            {
+                if (File != null)
+                {
+                    byte[] bytes;
+                    using (BinaryReader br = new BinaryReader(File.InputStream))
+                    {
+                        bytes = br.ReadBytes(File.ContentLength);
+                    }
+                    string fileName = Path.GetFileName(File.FileName);
+                    using (SqlConnection con = new SqlConnection(constr))
+                    {
+                        string query = "INSERT INTO tFile(NoIpmi,Name,ContentType,Data,Type) VALUES (@NoIpmi,@Name, @ContentType, @Data,@Type)";
+                        using (SqlCommand cmd = new SqlCommand(query))
+                        {
+                            cmd.Connection = con;
+                            cmd.Parameters.AddWithValue("@NoIpmi", NoIpmi);
+                            cmd.Parameters.AddWithValue("@Name", fileName);
+                            cmd.Parameters.AddWithValue("@ContentType", File.ContentType);
+                            cmd.Parameters.AddWithValue("@Data", bytes);
+                            if (New)
+                            {
+                                cmd.Parameters.AddWithValue("@Type", 2);
+                            }
+                            else
+                            {
+                                cmd.Parameters.AddWithValue("@Type", 3);
+                            }
+
+                            con.Open();
+                            cmd.ExecuteNonQuery();
+                            con.Close();
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
-        //public ActionResult DownloadMultipleFiles1(string NoIpmi, int Type)
-        //{
-        //    try
-        //    {
-                
-        //        FileDownloads obj = new FileDownloads();
-        //        var filesCol = obj.GetFile1(NoIpmi, Type).ToList();
-
-        //        Response.Clear();
-
-        //        var downloadFileName = string.Format("YourDownload-{0}.zip", DateTime.Now.ToString("yyyy-MM-dd-HH_mm_ss"));
-        //        Response.ContentType = "application/zip";
-
-        //        Response.AddHeader("content-disposition", "filename=" + downloadFileName);
-
-        //        using (Ionic.Zip.ZipFile zipFile = new Ionic.Zip.ZipFile())
-        //        {
-        //            zipFile.AddDirectoryByName("Files");
-        //            foreach (var file in filesCol)
-        //            {
-        //                zipFile.AddFile(file.Name, "Files");
-        //            }
-        //            zipFile.Save(Response.OutputStream);
-
-        //            return File(zipFile.GetStream(), "application/octet-stream", downloadFileName);
-        //        }
-                
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
     }
 }

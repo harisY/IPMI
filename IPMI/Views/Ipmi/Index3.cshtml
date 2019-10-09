@@ -33,6 +33,12 @@
                                 <td class="_i">@no</td>
                                 <td style="text-align:center;">
                                     <button class="btn btn-xs btn-info" title="View" onclick="location.href='@Url.Action("Verifikasi", "Ipmi")/@item.NoIPMI'"><span class="fa fa-pencil"></span></button>
+                                    @if (item.FileAnalisa == true)
+                                    {
+
+                                        @*<button class="btn btn-xs btn-info" title="Download" onclick="location.href='@Url.Action("IndexDownload", "Analisa1")/@item.NoIPMI'"><span class="fa fa-arrow-down"></span></button>*@
+                                        <button class="btn btn-xs btn-info" title="Download Analisa" onclick='window.location = "@Url.Action("IndexDownload", "Analisa1", new { NoIpmi = item.NoIPMI, Type=2 })";'><span class="fa fa-arrow-down"></span></button>
+                                    }
                                 </td>
                                 <td class="_noipmi">@item.NoIPMI</td>
                                 <td class="_tgl">@item.Tgl</td>
@@ -65,7 +71,7 @@
                 "autoWidth": false,
                 columnDefs: [{
                     targets: 3, render: function (data) {
-                        return moment(data).format('L');
+                        return moment(data).format('DD-MM-YYYY');
                     }
                 }]
             });

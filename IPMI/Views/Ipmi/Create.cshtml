@@ -4,6 +4,7 @@
     ViewBag.Title = "Identifikasi Masalah";
     var ListDept = ViewBag.IdDept;
     var AutoNo = ViewBag.AutoNO;
+    List<StandartComboBox> ListCustomer = (List<StandartComboBox>)ViewData["Customer"];
 
 }
 
@@ -30,12 +31,26 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left">Customer</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <select id="cmbCust" class="form-control select2" style="width: 100%;">
+                                <option value="">Pilih Customer</option>
+                                @foreach (var item in ListCustomer)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-md-1 control-label" style="text-align:left">Dari</label>
                         <label class="col-md-1 control-label">:</label>
                         <div class="col-md-5">
                             <input type="text" class="form-control" id="txtDept" value="@ViewBag.Dari" disabled="disabled">
                         </div>
                     </div>
+
                     <div class="form-group">
                         <label class="col-md-1 control-label" style="text-align:left">Tujuan</label>
                         <label class="col-md-1 control-label">:</label>
@@ -146,7 +161,7 @@
             //    data.append(files[i].name, files[i], txtIpmi + "_" + files[i].name);
             //}
             var files = $("#fileUpload").get(0).files;
-            
+
             for (var i = 0; i < files.length; i++) {
                 data.append("NoIpmi", txtIpmi1);
                 data.append("New", true);
@@ -192,6 +207,8 @@
             var txtDept = $("#txtDept").val();
             var txtDate = $("#txtDate").val();
             var cmbDept = $("#cmbDept option:selected").val();
+            var cmbCust = $("#cmbCust option:selected").val();
+            var cmbCust1 = $("#cmbCust option:selected").text();
             var txtProblem = $("#txtProblem").val();
             var txtJml = $("#txtJml").val();
             var IsExist = "0";
@@ -207,7 +224,7 @@
             } else {
                 IsExist = "0";
             }
-            
+
             if (txtIpmi == "") {
                 toastr.warning('No IPMI tidak boleh kosong')
                 $("#txtIpmi").focus();
@@ -232,6 +249,8 @@
                 var models = {
                     NoIPMI: txtIpmi,
                     Tgl: txtDate,
+                    CustomerId: cmbCust,
+                    CustomerName: cmbCust1,
                     Dari: txtDept,
                     Masalah: txtProblem,
                     Jumlah: txtJml,
@@ -249,6 +268,7 @@
                             //if (IsExist == "1") {
                             //    CreateUpload();
                             //}
+
                             window.location.href = newUrl;
                         } else {
                             //alert("Error");

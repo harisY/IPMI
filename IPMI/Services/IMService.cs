@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using IPMI.Entity;
 using IPMI.Models;
 using IPMI.Repository;
+using LibDataAccess;
 namespace IPMI.Services
 {
     public partial class IMService
     {
         private GenericRepository<tIpmi> IMRepository;
-
+        MyLib myLib = new MyLib();
+        string conn = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+        string connSolomon = ConfigurationManager.ConnectionStrings["SolomonConnection"].ConnectionString;
         public IMService()
         {
             this.IMRepository = new GenericRepository<tIpmi>(new IPMI_DBEntities());
@@ -46,13 +50,13 @@ namespace IPMI.Services
 
         public int Insert(object[] parameters)
         {
-            string spQuery = "[Set_Ipmi] {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7},{8}";
+            string spQuery = "[Set_Ipmi] {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7},{8},{9},{10}";
             return IMRepository.ExecuteCommand(spQuery, parameters);
         }
 
         public int Update(object[] parameters)
         {           
-            string spQuery = "[Update_Ipmi]{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}";
+            string spQuery = "[Update_Ipmi]{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8},{9},{10}";
             return IMRepository.ExecuteCommand(spQuery, parameters);
         }
         public int UpdateStatusIpmi(object[] parameters)
@@ -117,6 +121,88 @@ namespace IPMI.Services
                 }
             }
             return files;
+        }
+
+        public string GetEmail(string Ke)
+        {
+            string Email = string.Empty;
+            try
+            {
+                string que = @"SELECT top 1 Email FROM AspNetUsers where IdDept='" + Ke + "'";
+                DataTable dt = new DataTable();
+                myLib.strConn = conn;
+                dt = myLib.GetDataTable(que);
+                if (dt.Rows.Count > 0)
+                {
+                    Email = dt.Rows[0][0].ToString();
+                }
+                return Email;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
+
+        }
+
+        public string GetEmailAnalisa(string Dari)
+        {
+            string Email = string.Empty;
+            try
+            {
+                string que = @"SELECT top 1 Email FROM AspNetUsers where IdDept='" + Dari + "'";
+                DataTable dt = new DataTable();
+                myLib.strConn = conn;
+                dt = myLib.GetDataTable(que);
+                if (dt.Rows.Count > 0)
+                {
+                    Email = dt.Rows[0][0].ToString();
+                }
+               
+                
+                return Email;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
+        public DataTable GetIpmiByNo(string NoIpmi)
+        {
+            try
+            {
+                string que = @"SELECT Dari, Ke, Masalah From tIpmi where NoIPMI = '" + NoIpmi + "'";
+                DataTable dt = new DataTable();
+                myLib.strConn = conn;
+                dt = myLib.GetDataTable(que);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public DataTable GetCustomer()
+        {
+            try
+            {
+                string que = @"select CustId, Name from Customer";
+                DataTable dt = new DataTable();
+                myLib.strConn = connSolomon;
+                dt = myLib.GetDataTable(que);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
     }
 }

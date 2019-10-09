@@ -7,6 +7,7 @@
     string dari = ViewBag.Dari;
 
 }
+
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -21,6 +22,7 @@
                             <th style="width:20px; text-align:center;">Action</th>
                             <th>No IPMI</th>
                             <th>Tanggal</th>
+                            <th>Customer</th>
                             <th>Dari</th>
                             <th>Masalah</th>
                             <th>Status</th>
@@ -40,13 +42,14 @@
                                     @if (item.FileName.ToString() != "0")
                                     {
 
-                                        <button class="btn btn-xs btn-info" title="Download" onclick="Down('@item.NoIPMI')"><span class="fa fa-arrow-down"></span></button>
-
+                                        @*<button class="btn btn-xs btn-info" title="Download" onclick="location.href='@Url.Action("IndexDownload", "Analisa1")/@item.NoIPMI'"><span class="fa fa-arrow-down"></span></button>*@
+                                        <button class="btn btn-xs btn-info" title="Download Identifikasi" onclick='window.location = "@Url.Action("IndexDownload", "Analisa1", new { NoIpmi = item.NoIPMI, Type=0 })";'><span class="fa fa-arrow-down"></span></button>
                                     }
                                 </td>
 
                                 <td class="_noipmi">@item.NoIPMI</td>
                                 <td class="_tgl">@item.Tgl</td>
+                                <td class="_cust">@item.CustomerName</td>
                                 <td class="_dari">@item.Dari</td>
                                 <td class="_masalah">@item.Masalah</td>
                                 <td class="_status">@item.Status1</td>
@@ -58,6 +61,8 @@
         </div>
     </div>
 </div>
+
+
 @section scripts{
     <script>
         $(document).ready(function () {
@@ -75,7 +80,7 @@
                 "autoWidth": false,
                 columnDefs: [{
                     targets: 3, render: function (data) {
-                        return moment(data).format('L');
+                        return moment(data).format('DD-MM-YYYY');
                     }
                 }]
             });
@@ -88,16 +93,32 @@
         if ("@message" != "0") {
             toastr.success("Data Berhasil di simpan");
         }*@
-        function Down(NoIpmi) {
-                var NoIpmi1 = NoIpmi;
-                var url = "@Url.Action("DownloadMultipleFiles", "Analisa1")";
-                var model = {
-                    NoIPmi: NoIpmi1,
-                    Type : 0
-                };
-                $.get(url, model);
+
+        function DownNew(NoIpmi) {
+            $.ajax(
+            {
+                url: '@Url.Action("DownloadMultipleFiles1", "Analisa1")',
+                contentType: 'application/json; charset=utf-8',
+                datatype: 'json',
+                data: {
+                    NoIpmi: NoIpmi
+                },
+                type: "GET",
+                success: function () {
+                    window.location = '@Url.Action("DownloadMultipleFiles1", "Analisa1", new { NoIpmi = "IPMI1NPD0001012019" })';
+                }
+            });
         }
-        
+        function Down(NoIpmi) {
+            var NoIpmi1 = NoIpmi;
+            var url = "@Url.Action("DownloadMultipleFiles", "Analisa1")";
+            var model = {
+                NoIPmi: NoIpmi1,
+                Type : 0
+            };
+            $.post(url, model);
+        }
+
         function Download(NoIpmi, Type) {
 
             var url = '@Url.Action("DownloadFile", "Analisa1")';

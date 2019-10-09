@@ -42,14 +42,22 @@
                                     {
 
                                         @*<button class="btn btn-xs btn-info" title="Download" onclick="location.href='@Url.Action("DownloadFile", "Analisa1")?NoIpmi=' + ('@item.NoIPMI')"><span class="fa fa-arrow-down"></span></button>*@
-                                        <button class="btn btn-xs btn-info" title="Download" onclick="Down('@item.NoIPMI')"><span class="fa fa-arrow-down"></span></button>
+                                        @*<button class="btn btn-xs btn-info" title="Download" onclick="Down('@item.NoIPMI')"><span class="fa fa-arrow-down"></span></button>*@
+                                        <button class="btn btn-xs btn-info" title="Download Identifikasi" onclick='window.location = "@Url.Action("IndexDownload", "Analisa1", new { NoIpmi = item.NoIPMI, Type=0 })";'><span class="fa fa-arrow-down"></span></button>
 
                                     }
                                     @if (item.FileName1.ToString() != "0")
                                     {
 
-                                        <button class="btn btn-xs btn-info" title="Download Comment" onclick="DownComment('@item.NoIPMI')"><span class="fa fa-arrow-down"></span></button>
+                                        @*<button class="btn btn-xs btn-info" title="Download Comment" onclick="DownComment('@item.NoIPMI')"><span class="fa fa-arrow-down"></span></button>*@
+                                        <button class="btn btn-xs btn-info" title="Download Identifikasi" onclick='window.location = "@Url.Action("IndexDownload", "Analisa1", new { NoIpmi = item.NoIPMI, Type=1 })";'><span class="fa fa-arrow-down"></span></button>
 
+                                    }
+                                    @if (item.FileAnalisa == true)
+                                    {
+
+                                        @*<button class="btn btn-xs btn-info" title="Download" onclick="location.href='@Url.Action("IndexDownload", "Analisa1")/@item.NoIPMI'"><span class="fa fa-arrow-down"></span></button>*@
+                                        <button class="btn btn-xs btn-info" title="Download Analisa" onclick='window.location = "@Url.Action("IndexDownload", "Analisa1", new { NoIpmi = item.NoIPMI, Type=2 })";'><span class="fa fa-arrow-down"></span></button>
                                     }
                                 </td>
                                 <td class="_noipmi">@item.NoIPMI</td>
@@ -99,7 +107,7 @@
         function Down(NoIpmi) {
                 var NoIpmi1 = NoIpmi;
                 var NamaDept = "";
-                var url = '@Url.Action("DownloadMultipleFiles", "Analisa1")';
+                var url = '@Url.Action("DownloadFiles", "Analisa1")';
                 var model = {
                     NoIPmi: NoIpmi1,
                     Type: 0
@@ -109,7 +117,7 @@
 
         function DownComment(NoIpmi) {
                 var NoIpmi1 = NoIpmi;
-                var url = '@Url.Action("DownloadMultipleFiles", "Analisa1")';
+                var url = '@Url.Action("DownloadFiles", "Analisa1")';
                 var model = {
                     NoIPmi: NoIpmi1,
                     Type : 1

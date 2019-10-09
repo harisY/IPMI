@@ -11,6 +11,10 @@ using IPMI.Models.Repo;
 using System.IO;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
+using System.Data;
 
 namespace IPMI.Controllers
 {
@@ -49,6 +53,7 @@ namespace IPMI.Controllers
         // GET: Ipmi/Create
         public ActionResult Create()
         {
+            ViewData["Customer"] = CustomerToList();
             ViewBag.IdDept = GetDeptToList();
             object[] nama = { User.Identity.Name };
             string NamaDept = objDept.GetDeptByID(nama);
@@ -66,7 +71,7 @@ namespace IPMI.Controllers
             int result = 0;
 
             model.CreatedBy = User.Identity.Name;
-            object[] parameters = { model.NoIPMI, model.Tgl
+            object[] parameters = { model.NoIPMI, model.Tgl, model.CustomerId.TrimEnd(), model.CustomerName.TrimEnd()
                                         ,model.Dari, model.ke
                                         ,model.Masalah, model.Jumlah
                                         ,model.FileName
@@ -74,6 +79,35 @@ namespace IPMI.Controllers
             result = objIpmi.Insert(parameters);
             if (result == 1)
             {
+                string email = string.Empty;
+                email = objIpmi.GetEmail(model.ke);
+
+                //MailMessage mail = new MailMessage("ipmi@tsmu.co.id", email);
+                MailMessage mail = new MailMessage();
+                mail.IsBodyHtml = true;
+                mail.From = new MailAddress("ipmi@tsmu.co.id", "IPMI");
+                mail.To.Add(new MailAddress(email));
+                var smpt = new SmtpClient
+                {
+                    Host = "mail.tsmu.co.id",
+                    Port = 25,
+                    EnableSsl = false,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    Credentials = new NetworkCredential("ipmi@tsmu.co.id", "svPyyO(++6cj"),
+                    Timeout = 20000
+                };
+                //var body = new StringBuilder();
+                //body.AppendFormat("Ada Masalah baru :");
+                //body.AppendLine(@">Dari =" + model.Dari);
+                //body.AppendLine(@">Masalah =" + model.Masalah);
+                //body.AppendLine("<a href='https://srv02.tsmu.co.id/ipmi/Account/Login?ReturnUrl=%2Fipmi%2F'>Klik di sini untuk Login</a>");
+                //mail.Body = body.ToString();
+                string emailSubject = "IPMI Notification " + model.NoIPMI;
+                mail.Subject = emailSubject;
+                mail.Body = "Identifikasi Masalah baru : <br /> > Dari =" + model.Dari + "<br /> > Msalah = " + model.Masalah + "<br /> <a href='https://srv02.tsmu.co.id/ipmi/Account/Login?ReturnUrl=%2Fipmi%2F'>Klik di sini untuk Login</a>";
+                mail.IsBodyHtml = true;
+                mail.CC.Add("log@tsmu.co.id");
+                smpt.Send(mail);
                 this.AddToastMessage("IPMI", "Data berhasil di simpan !", ToastType.Success);
                 return Json(new { success = true }, JsonRequestBehavior.AllowGet);
             }
@@ -88,6 +122,7 @@ namespace IPMI.Controllers
         // GET: Ipmi/Edit/5
         public ActionResult Edit(string id)
         {
+            ViewData["Customer"] = CustomerToList();
             ViewBag.IdDept = GetDeptToList();
             object[] parameters = { id };
             ViewData["ListIpmi"] = objIpmi.GetbyID(parameters);
@@ -103,7 +138,7 @@ namespace IPMI.Controllers
             try
             {
                 models.UpdatedBy = User.Identity.Name;
-                object[] parameters = { models.NoIPMI, models.Tgl
+                object[] parameters = { models.NoIPMI, models.Tgl, models.CustomerId.TrimEnd(), models.CustomerName.TrimEnd()
                                         ,models.Dari, models.ke
                                         ,models.Masalah, models.Jumlah
                                         ,models.FileName
@@ -290,6 +325,27 @@ namespace IPMI.Controllers
             }
 
             return SelectGroupListItems;
+        }
+
+
+        private List<StandartComboBox> CustomerToList()
+        {
+            List<StandartComboBox> Result = new List<StandartComboBox>();
+            DataTable dt = new DataTable();
+            dt = objIpmi.GetCustomer();
+            //IEnumerable<DataRow> Customer = dt.AsEnumerable();
+            foreach (DataRow row in dt.Rows)
+            {
+                Result.Add(
+                    new StandartComboBox
+                    {
+                        Value = Convert.ToString(row["CustId"]),
+                        Text = Convert.ToString(row["Name"])
+                    });
+            }
+
+            
+            return Result;
         }
         public ActionResult Upload()
         {

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace IPMI.Report.IM {
+namespace IPMI.Report.Perbaikan {
     using System;
     using System.ComponentModel;
     using CrystalDecisions.Shared;
@@ -41,7 +41,7 @@ namespace IPMI.Report.IM {
         
         public override string FullResourceName {
             get {
-                return "IPMI.Report.IM.ReportIM.rpt";
+                return "IPMI.Report.Perbaikan.ReportIM.rpt";
             }
             set {
                 // Do nothing

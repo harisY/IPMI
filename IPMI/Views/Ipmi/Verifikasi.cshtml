@@ -26,11 +26,19 @@
                                     <input id="txtIpmi" class="form-control" disabled="disabled" value="@tIpmi.NoIPMI" />
                                 </div>
                             </div>
+
                             <div class="form-group">
                                 <label class="col-md-3 control-label" style="text-align:left">Tanggal</label>
                                 <label class="col-md-1 control-label">:</label>
                                 <div class="col-md-8">
                                     <input type="text" class="form-control" id="txtDate" disabled="disabled" value="@tIpmi.Tgl">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="text-align:left">Customer</label>
+                                <label class="col-md-1 control-label">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="txtCust" disabled="disabled" value="@tIpmi.CustomerName">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -175,7 +183,7 @@
             //InitialConditions();
             $("#cmbDept").val("@tIpmi.ke");
 
-            
+
         })
         toastr.options = {
             "positionClass": "toast-bottom-right",
@@ -212,7 +220,7 @@
         }
         function Verifikasi() {
             var txtIpmi = $("#txtIpmi").val();
-            
+
             if (txtIpmi == "") {
                 toastr.warning('No data to delete.')
             }
@@ -226,7 +234,7 @@
                     data: {models},
                     success: function (data) {
                         if (data.success) {
-                            
+
                             window.location.href = newUrl;
 
                         } else {
@@ -268,7 +276,7 @@
                     data: {models},
                     success: function (data) {
                         if (data.success) {
-                            
+
                             window.location.href = newUrl;
 
                         } else {

@@ -20,6 +20,8 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="NoIPMI" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Tgl" Type="date" />
+          <Property Name="CustomerId" Type="varchar" MaxLength="20" />
+          <Property Name="CustomerName" Type="varchar" MaxLength="100" />
           <Property Name="Dari" Type="varchar" MaxLength="6" Nullable="false" />
           <Property Name="ke" Type="varchar" MaxLength="6" />
           <Property Name="Masalah" Type="varchar(max)" />
@@ -28,6 +30,7 @@
           <Property Name="Ket" Type="varchar" MaxLength="250" />
           <Property Name="FileName" Type="varchar" MaxLength="1" />
           <Property Name="FileName1" Type="varchar" MaxLength="1" />
+          <Property Name="FileAnalisa" Type="bit" />
           <Property Name="Status1" Type="varchar" MaxLength="10" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
           <Property Name="CreatedDate" Type="datetime" />
@@ -99,6 +102,9 @@
           <Property Name="Status1" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="Ket" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="FileName1" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="FileAnalisa" Type="Boolean" />
+          <Property Name="CustomerId" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="CustomerName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="tIpmiAnalisa">
           <Key>
@@ -151,6 +157,9 @@
           <EntitySetMapping Name="tIpmis">
             <EntityTypeMapping TypeName="IPMI_DBModel.tIpmi">
               <MappingFragment StoreEntitySet="tIpmi">
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="FileAnalisa" ColumnName="FileAnalisa" />
                 <ScalarProperty Name="FileName1" ColumnName="FileName1" />
                 <ScalarProperty Name="Ket" ColumnName="Ket" />
                 <ScalarProperty Name="Status1" ColumnName="Status1" />

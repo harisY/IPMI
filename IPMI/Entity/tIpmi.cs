@@ -30,5 +30,8 @@ namespace IPMI.Entity
         public string Status1 { get; set; }
         public string Ket { get; set; }
         public string FileName1 { get; set; }
+        public Nullable<bool> FileAnalisa { get; set; }
+        public string CustomerId { get; set; }
+        public string CustomerName { get; set; }
     }
 }

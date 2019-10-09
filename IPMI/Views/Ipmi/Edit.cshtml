@@ -1,11 +1,11 @@
 ﻿@model IEnumerable<IPMI.Entity.tIpmi>
 @using IPMI.Entity;
+@using IPMI.Models;
 @{
     ViewBag.Title = "Identifikasi Masalah";
     var ListDept = ViewBag.IdDept;
     tIpmi tIpmi = (tIpmi)ViewData["ListIpmi"];
-
-
+    List<StandartComboBox> ListCustomer = (List<StandartComboBox>)ViewData["Customer"];
 }
 
 <div class="row">
@@ -28,6 +28,19 @@
                         <label class="col-md-1 control-label">:</label>
                         <div class="col-md-5">
                             <input type="text" class="form-control" id="txtDate" value="@tIpmi.Tgl">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" style="text-align:left">Customer</label>
+                        <label class="col-md-1 control-label">:</label>
+                        <div class="col-md-5">
+                            <select id="cmbCust" class="form-control select2" style="width: 100%;">
+                                <option value="">Pilih Customer</option>
+                                @foreach (var item in ListCustomer)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
                         </div>
                     </div>
                     <div class="form-group">
@@ -103,6 +116,7 @@
             });
             //InitialConditions();
             $("#cmbDept").val("@tIpmi.ke");
+            $("#cmbCust").val("@tIpmi.CustomerId");
             $('.select2').select2();
 
         })
@@ -175,6 +189,8 @@
          function Edit() {
             var txtIpmi = $("#txtIpmi").val();
             var cmbDept = $("#cmbDept option:selected").val();
+            var cmbCust = $("#cmbCust option:selected").val();
+            var cmbCust1 = $("#cmbCust option:selected").text();
             var txtDept = $("#txtDept").val();
             var txtDate = $("#txtDate").val();
             var txtProblem = $("#txtProblem").val();
@@ -207,6 +223,8 @@
                 var models = {
                     NoIPMI: txtIpmi,
                     Tgl: txtDate,
+                    CustomerId: cmbCust,
+                    CustomerName: cmbCust1,
                     Dari: txtDept,
                     Masalah: txtProblem,
                     Jumlah: txtJml,
@@ -220,11 +238,11 @@
                     data: {models},
                     success: function (data) {
                         if (data.success) {
-                            
+
                             window.location.href = newUrl;
 
                         } else {
-                            
+
                             window.location.href = newUrl;
                         }
                     }

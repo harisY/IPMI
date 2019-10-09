@@ -1,0 +1,12 @@
+﻿
+@{
+    ViewBag.Title = "Download";
+    var NoIpmi = ViewBag.NoIpmi;
+    var Type = ViewBag.Type;
+}
+
+@using (Html.BeginForm("DownloadMultipleFiles1", "Analisa1", new { NoIpmi= NoIpmi, Type= Type }, FormMethod.Post, null))
+{
+        <input type="submit" value="Download" />
+}
+

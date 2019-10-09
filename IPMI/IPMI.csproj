@@ -52,6 +52,9 @@
     <Reference Include="DotNetZip, Version=1.13.0.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetZip.1.13.0\lib\net40\DotNetZip.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.1.0.145, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.1.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="LibDataAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Library\TSMU\LibDataAccess\bin\Debug\LibDataAccess.dll</HintPath>
@@ -292,7 +295,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ReportIM.rpt</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Report\IM\ReportIpmi.cs">
       <AutoGen>True</AutoGen>
@@ -5159,6 +5161,7 @@
     <Content Include="Views\Reports\Index1.cshtml" />
     <Content Include="Views\Analisa1\Index3.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Views\Analisa1\IndexDownload.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Report\IM\ReportIM.rpt">
